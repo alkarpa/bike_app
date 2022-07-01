@@ -21,14 +21,13 @@ func ReadFromCSV(path string) (map[string][]string, error) {
 
 	ret := make(map[string][]string)
 
-	/*
-		for i, key := range keys {
-			fmt.Printf("key %d %s\n", i, key)
-		}
-	*/
-
+	const title_line_index = 0
 	for i, line := range lines {
-		if i == 0 {
+		if i == title_line_index {
+			continue
+		}
+		if strings.Contains(line, ",,") || strings.Contains(line, ",\n") {
+			//fmt.Printf("Line %d is missing data\n", i)
 			continue
 		}
 		values := strings.Split(line, ",")
