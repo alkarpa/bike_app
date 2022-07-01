@@ -1,0 +1,2 @@
+Departure,Return,Departure station id,Return station id,Covered distance (m),Duration (sec.)
+2022-07-01T12:00:00,2022-07-01T12:10:00,1,2,555,600,too many,too

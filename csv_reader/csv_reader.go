@@ -1,14 +1,9 @@
 package csvreader
 
 import (
-	"fmt"
 	"os"
 	"strings"
 )
-
-func main() {
-	fmt.Println(".csv reader")
-}
 
 func ReadFromCSV(path string) (map[string][]string, error) {
 	dat, err := os.ReadFile(path)
@@ -16,8 +11,12 @@ func ReadFromCSV(path string) (map[string][]string, error) {
 		return nil, err
 	}
 
+	//fmt.Printf("Reading file %s\n", path)
+
 	lines := strings.Split(string(dat), "\n")
 	keys := strings.Split(lines[0], ",")
+
+	//fmt.Printf("There are %d lines of data\n", len(lines)-1)
 
 	ret := make(map[string][]string)
 
@@ -31,6 +30,11 @@ func ReadFromCSV(path string) (map[string][]string, error) {
 			continue
 		}
 		values := strings.Split(line, ",")
+
+		if len(values) > len(keys) {
+			continue
+		}
+
 		for j, val := range values {
 			ret[keys[j]] = append(ret[keys[j]], val)
 		}

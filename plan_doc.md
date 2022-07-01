@@ -1,6 +1,5 @@
 # TODO
 - .csv reader
-    - bad input content handling
 - database
 - back end
 - front end
