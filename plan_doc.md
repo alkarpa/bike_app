@@ -1,4 +1,11 @@
+# TODO
+- .csv reader
+- database
+- back end
+- front end
  
+===
+
 # Parts
 
 ## React Front end
