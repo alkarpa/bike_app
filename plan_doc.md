@@ -1,8 +1,17 @@
 # TODO
 - .csv reader
+    - change from column to row approach with returned data
 - database
+    - creation scripts and env variables
+    - foreign keys
+    - change `ride` primary to an autoincremented int to account for very similar rides
 - back end
+    - database access
+        - csv reader data should use this db access to insert
+    - REST API
 - front end
+    - fetching data
+    - displaying data
  
 ===
 
@@ -28,7 +37,7 @@ station
 
 | column | type |
 |--------|----|
-| fid | int |
+| id | int |
 | name | string |
 
 trip
