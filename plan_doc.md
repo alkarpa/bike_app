@@ -1,6 +1,5 @@
 # TODO
 - .csv reader
-    - change from column to row approach with returned data
 - database
     - creation scripts and env variables
     - foreign keys

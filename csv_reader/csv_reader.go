@@ -25,9 +25,8 @@ func ReadFromCSV(path string) ([]string, [][]string, error) {
 		if i == title_line_index {
 			continue
 		}
-
 		// skip lines with missing data
-		if strings.Contains(line, ",,") || strings.Contains(line, ",\n") {
+		if len(line) == 0 || strings.Contains(line, ",,") || strings.Contains(line, ",\n") {
 			continue
 		}
 		values := strings.Split(line, ",")
@@ -39,7 +38,6 @@ func ReadFromCSV(path string) ([]string, [][]string, error) {
 
 		ret = append(ret, values)
 	}
-	//fmt.Printf("ret map %s", ret)
 
 	return keys, ret, nil
 }

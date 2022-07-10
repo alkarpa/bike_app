@@ -19,6 +19,13 @@ func TestSimpleRideFile(t *testing.T) {
 	depStatKey := GetKeyIndex("Departure station id", keys)
 	retStatKey := GetKeyIndex("Return station id", keys)
 
+	t.Run("dat has a length of 2", func(t *testing.T) {
+		expected := 2
+		received := len(dat)
+		if expected != received {
+			t.Fatalf("expected %d does not equal received %d", expected, received)
+		}
+	})
 	t.Run("data_line[0] Departure station id is 1", func(t *testing.T) {
 		expected := "1"
 		received := dat[0][depStatKey]
