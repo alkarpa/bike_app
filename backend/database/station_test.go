@@ -1,6 +1,8 @@
 package database
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestStationService(t *testing.T) {
 	db, err := openSQL("bike_app_test_user", "bike_pw", "bike_app_test")
