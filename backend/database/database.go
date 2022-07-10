@@ -27,12 +27,14 @@ func OpenSQL() (*sql.DB, error) {
 	return openSQL(dbUser, dbPassword, dbName)
 }
 
+// Initial placeholder for testing and base for future modifications
 func ImportFromCSVs() error {
 	fmt.Println("Test CSV")
-	a, err := csv.ReadFromCSV("../Helsingin_ja_Espoon_kaupunkipyöräasemat_avoin.csv")
+	keys, data, err := csv.ReadFromCSV("../Helsingin_ja_Espoon_kaupunkipyöräasemat_avoin.csv")
 	if err != nil {
 		return err
 	}
-	fmt.Println(len(a))
+	fmt.Println(keys)
+	fmt.Println(len(data))
 	return nil
 }

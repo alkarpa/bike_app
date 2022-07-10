@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-func ReadFromCSV(path string) (map[string][]string, error) {
+func ReadFromCSV(path string) ([]string, [][]string, error) {
 	dat, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	//fmt.Printf("Reading file %s\n", path)
@@ -18,28 +18,37 @@ func ReadFromCSV(path string) (map[string][]string, error) {
 
 	//fmt.Printf("There are %d lines of data\n", len(lines)-1)
 
-	ret := make(map[string][]string)
+	ret := make([][]string, 0)
 
 	const title_line_index = 0
 	for i, line := range lines {
 		if i == title_line_index {
 			continue
 		}
+
+		// skip lines with missing data
 		if strings.Contains(line, ",,") || strings.Contains(line, ",\n") {
-			//fmt.Printf("Line %d is missing data\n", i)
 			continue
 		}
 		values := strings.Split(line, ",")
 
+		// skip lines if the lengths don't match
 		if len(values) > len(keys) {
 			continue
 		}
 
-		for j, val := range values {
-			ret[keys[j]] = append(ret[keys[j]], val)
-		}
+		ret = append(ret, values)
 	}
 	//fmt.Printf("ret map %s", ret)
 
-	return ret, nil
+	return keys, ret, nil
+}
+
+func GetKeyIndex(key string, keys []string) int {
+	for i, val := range keys {
+		if val == key {
+			return i
+		}
+	}
+	return -1
 }
