@@ -110,3 +110,18 @@ func TestKeyIndex(t *testing.T) {
 	})
 
 }
+
+func TestBOM(t *testing.T) {
+	keys, _, err := ReadFromCSV("test_data/bom.csv")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	t.Run("No BOM in the keys", func(t *testing.T) {
+		received := keys[0]
+		expected := "EF BB BF"
+		if received != expected {
+			t.Fatalf("expected %s, received %s", expected, received)
+		}
+	})
+}

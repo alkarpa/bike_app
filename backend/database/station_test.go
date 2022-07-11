@@ -19,7 +19,7 @@ func TestStationService(t *testing.T) {
 		})
 	*/
 
-	t.Run("Insert something", func(t *testing.T) {
+	t.Run("Insert 2 stations", func(t *testing.T) {
 		stations := make([][]string, 2)
 		//fmt.Println("Before assignment")
 		stations[0] = []string{"1", "Boston"}
