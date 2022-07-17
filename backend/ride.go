@@ -64,4 +64,5 @@ func NewRidesFromDataSlice(keys []string, data [][]string) [](*Ride) {
 
 type RideService interface {
 	CreateRide(r *Ride) error
+	GetRides() ([]*Ride, error)
 }

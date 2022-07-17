@@ -53,3 +53,11 @@ func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
 	}
 	return nil
 }
+
+func (rs *RideService) CreateRide(ride *bike_app_be.Ride) error {
+	return nil
+}
+
+func (rs *RideService) GetRides() ([]*bike_app_be.Ride, error) {
+	return nil, nil
+}
