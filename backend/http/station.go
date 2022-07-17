@@ -5,15 +5,14 @@ import (
 	"net/http"
 )
 
-func (server *Server) getRides() func(http.ResponseWriter, *http.Request) {
+func (server *Server) getStations() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		rides, err := server.RideService.GetRides()
+		stations, err := server.StationService.GetAll()
 		if err != nil {
 			http.Error(w, "error retrieving stations", http.StatusInternalServerError)
 		}
 
-		js, _ := json.Marshal(rides)
+		js, _ := json.Marshal(stations)
 		w.Write(js)
 
 	}

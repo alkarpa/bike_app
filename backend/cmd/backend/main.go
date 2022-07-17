@@ -13,12 +13,13 @@ import (
 func main() {
 	db, err := database.OpenSQL()
 	if err != nil {
-		log.Fatal("Could not open DB connection")
+		log.Fatal("failed to open database connection")
 	}
 	defer db.Close()
 
 	server := http.NewServer()
 	server.RideService = database.NewRideService(db)
+	server.StationService = database.NewStationService(db)
 
 	// This makes the server wait for an interrupt
 	ctx, cancel := context.WithCancel(context.Background())

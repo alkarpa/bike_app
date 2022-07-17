@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"alkarpa.fi/bike_app_be"
 )
 
 type StationService struct {
@@ -15,22 +17,29 @@ func NewStationService(db *sql.DB) *StationService {
 	return &StationService{db: db}
 }
 
-func (s *StationService) GetAll() ([]string, error) {
+func (s *StationService) GetAll() ([]*bike_app_be.Station, error) {
 	rows, err := s.db.Query("SELECT * FROM station")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
+	stations := []*bike_app_be.Station{}
+
 	for rows.Next() {
-		// TODO
+		var station = &bike_app_be.Station{}
+		err = rows.Scan(&station.Id, &station.Name)
+		if err != nil {
+			return nil, err
+		}
+		stations = append(stations, station)
 	}
 
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return stations, nil
 }
 
 func (s *StationService) InsertStations(rows [][]string) error {

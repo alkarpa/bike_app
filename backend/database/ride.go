@@ -26,7 +26,7 @@ func statementValues(number_of_values uint) string {
 
 func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
 	// duration is temporarily used to count duplicates
-	const sql_insert = "INSERT INTO ride  VALUES %s ON DUPLICATE KEY UPDATE duration=duration+1" //departure=departure"
+	const sql_insert = "INSERT INTO ride  VALUES %s ON DUPLICATE KEY UPDATE departure=departure"
 	const number_of_values = 6
 	stmt_values := statementValues(number_of_values)
 
@@ -38,7 +38,7 @@ func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
 		valueStrings = append(valueStrings, stmt_values)
 
 		// duration is temporarily used to count duplicates
-		values = append(values, ride.Departure, ride.Return, ride.Departure_station_id, ride.Return_station_id, ride.Distance, 0) // ride.Duration)
+		values = append(values, ride.Departure, ride.Return, ride.Departure_station_id, ride.Return_station_id, ride.Distance, ride.Duration)
 	}
 	insert_query := fmt.Sprintf(sql_insert, strings.Join(valueStrings, ","))
 
@@ -59,5 +59,26 @@ func (rs *RideService) CreateRide(ride *bike_app_be.Ride) error {
 }
 
 func (rs *RideService) GetRides() ([]*bike_app_be.Ride, error) {
-	return nil, nil
+	rows, err := rs.db.Query("SELECT * FROM ride LIMIT 1000")
+	if err != nil {
+		return nil, err
+	}
+
+	rides := []*bike_app_be.Ride{}
+
+	for rows.Next() {
+		var ride = &bike_app_be.Ride{}
+
+		err = rows.Scan(&ride.Departure, &ride.Return, &ride.Departure_station_id, &ride.Return_station_id, &ride.Distance, &ride.Duration)
+		if err != nil {
+			return nil, err
+		}
+		rides = append(rides, ride)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return rides, nil
 }

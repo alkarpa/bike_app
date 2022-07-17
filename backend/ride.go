@@ -20,8 +20,9 @@ func stringsToInts(strings []string) []int {
 		n, err := strconv.Atoi(s)
 		if err != nil {
 			ints = append(ints, -1)
+		} else {
+			ints = append(ints, n)
 		}
-		ints = append(ints, n)
 	}
 	return ints
 }
@@ -45,19 +46,37 @@ func NewRidesFromDataSlice(keys []string, data [][]string) [](*Ride) {
 			dur = i
 		}
 	}
+
+	const min_duration = 10
+	const min_distance = 10
+
+	rideFilter := func(ride *Ride) bool {
+		if ride.Duration < min_duration {
+			return false
+		}
+		if ride.Distance < min_distance {
+			return false
+		}
+		return true
+	}
+
 	//fmt.Printf("%d,%d,%d,%d,%d,%d\n", d, r, did, rid, dis, dur)
 	rides := make([](*Ride), 0, len(data))
 	for _, row := range data {
 		ints := stringsToInts(row)
 
-		rides = append(rides, &Ride{
+		ride := &Ride{
 			Departure:            row[d],
 			Return:               row[r],
 			Departure_station_id: ints[did],
 			Return_station_id:    ints[rid],
 			Distance:             ints[dis],
 			Duration:             ints[dur],
-		})
+		}
+		if rideFilter(ride) {
+			rides = append(rides, ride)
+		}
+
 	}
 	return rides
 }

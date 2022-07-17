@@ -1,13 +1,13 @@
 # TODO
-- .csv reader
 - database
     - creation scripts and env variables
     - foreign keys
-    - change `ride` primary to an autoincremented int to account for very similar rides
+    - change station names to a station_name table with (ref to station id, language key, value)
 - back end
     - database access
-        - csv reader data should use this db access to insert
+        - get pagination for rides
     - REST API
+        - fix the unreliable server tests
 - front end
     - fetching data
     - displaying data

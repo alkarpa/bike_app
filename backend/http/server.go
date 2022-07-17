@@ -10,11 +10,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const addr = "localhost"
+const port = "8080"
+
 type Server struct {
 	server *http.Server
 	router *mux.Router
 
-	RideService bike_app_be.RideService
+	RideService    bike_app_be.RideService
+	StationService bike_app_be.StationService
 }
 
 func NewServer() *Server {
@@ -30,6 +34,10 @@ func NewServer() *Server {
 		subrouter := server.router.PathPrefix("/ride").Subrouter()
 		server.registerRideRoutes(subrouter)
 	}
+	{
+		subrouter := server.router.PathPrefix("/station").Subrouter()
+		server.registerStationRoutes(subrouter)
+	}
 
 	return server
 }
@@ -37,9 +45,12 @@ func NewServer() *Server {
 func (server *Server) registerRideRoutes(r *mux.Router) {
 	r.HandleFunc("/", server.getRides()).Methods("GET")
 }
+func (server *Server) registerStationRoutes(r *mux.Router) {
+	r.HandleFunc("/", server.getStations()).Methods("GET")
+}
 
 func (server *Server) ListenAndServe() {
-	server.server.Addr = "localhost:8080"
+	server.server.Addr = fmt.Sprintf("%s:%s", addr, port)
 	go server.server.ListenAndServe()
 
 	fmt.Println("Server listening")
