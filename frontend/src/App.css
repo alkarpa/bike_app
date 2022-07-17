@@ -1,0 +1,16 @@
+
+table {
+  margin: 1em;
+  text-align: right;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+table thead {
+  text-align: center;
+  background-color: aqua;
+}
+
+table tr:nth-child(2n) {
+  background-color: rgb(230,230,230);
+}

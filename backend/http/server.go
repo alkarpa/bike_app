@@ -59,6 +59,7 @@ func (server *Server) ListenAndServe() {
 func (server *Server) serveHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	server.router.ServeHTTP(w, r)
 }
