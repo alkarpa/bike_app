@@ -14,3 +14,8 @@ table thead {
 table tr:nth-child(2n) {
   background-color: rgb(230,230,230);
 }
+
+.App {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+}
