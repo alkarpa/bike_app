@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strings"
 	"sync"
 
 	"alkarpa.fi/bike_app_be"
@@ -21,49 +22,62 @@ func ImportFromCSVs() error {
 	}
 
 	fmt.Println("\n-=Stations")
-	if err = csvStations(db); err != nil {
+	station_ids, err := csvStations(db)
+	if err != nil {
 		return err
 	}
+
 	fmt.Println("\n-=Rides")
-	if err = csvRides(db); err != nil {
+	if err = csvRides(db, station_ids); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func csvStations(db *sql.DB) error {
+func csvStations(db *sql.DB) (map[int]struct{}, error) {
 	const directory = "../data/station/"
 	files, err := os.ReadDir(directory)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	station_ids := make(map[int]struct{})
 	for _, f := range files {
+		if !strings.HasSuffix(f.Name(), ".csv") {
+			continue
+		}
 		path := fmt.Sprintf("%s%s", directory, f.Name())
 		fmt.Printf("Importing %s\n", path)
-		if err := addStationsFromCsv(db, path); err != nil {
+		stids, err := addStationsFromCsv(db, path)
+		if err != nil {
 			fmt.Println(err.Error())
 		}
+		for key, value := range stids {
+			station_ids[key] = value
+		}
 	}
-	return nil
+	return station_ids, nil
 }
-func addStationsFromCsv(db *sql.DB, path string) error {
+func addStationsFromCsv(db *sql.DB, path string) (map[int]struct{}, error) {
 	keys, data, err := csv.ReadFromCSV(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	id := csv.GetKeyIndex("ID", keys)
-	name := csv.GetKeyIndex("Nimi", keys)
 
-	rows := make([][]string, 0)
-	for _, row := range data {
-		rows = append(rows, []string{row[id], row[name]})
-	}
+	stations := bike_app_be.NewStationsFromDataSlice(keys, data)
+
 	station_service := NewStationService(db)
-	return station_service.InsertStations(rows)
+	if err = station_service.InsertStations(stations); err != nil {
+		return nil, err
+	}
+	station_id_set := make(map[int]struct{})
+	for _, station := range stations {
+		station_id_set[station.Id] = struct{}{}
+	}
+	return station_id_set, station_service.insertStationLangFields(stations)
 }
 
-func csvRides(db *sql.DB) error {
+func csvRides(db *sql.DB, station_ids map[int]struct{}) error {
 	const directory = "../data/ride/"
 	files, err := os.ReadDir(directory)
 	if err != nil {
@@ -96,7 +110,7 @@ func csvRides(db *sql.DB) error {
 
 		for i := 0; i < len(data); i += batch_size {
 			max := int(math.Min(float64(i+batch_size), float64(len(data))))
-			rides := bike_app_be.NewRidesFromDataSlice(keys, data[i:max])
+			rides := bike_app_be.NewRidesFromDataSlice(station_ids, keys, data[i:max])
 			wg.Add(1)
 
 		finished_goroutines_check:

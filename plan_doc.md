@@ -37,7 +37,19 @@ station
 | column | type |
 |--------|----|
 | id | int |
-| name | string |
+| operator | varchar |
+| capacity | int |
+| x | double|
+| y | double|
+
+station_lang_field
+
+| column | type |
+|--------|----|
+| id | int |
+| lang | varchar |
+| key | varchar |
+| value | varchar |
 
 trip
 

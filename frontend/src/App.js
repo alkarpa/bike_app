@@ -10,7 +10,7 @@ const getStations = async () => {
   let response = await fetch(station_api)
   let json = await response.json()
 
-  const stations = json.reduce((map, cur) => ({ ...map, [cur.id]: cur.name }), {})
+  const stations = json //.reduce((map, cur) => ({ ...map, [cur.id]: cur.name }), {})
   return stations
 }
 
@@ -22,7 +22,8 @@ const getRides = async (parameters = {}) => {
 }
 
 function App() {
-  const [stations, setStations] = useState({})
+  const [lang, setLang] = useState('fi')
+  const [stations, setStations] = useState([])
   const [rides, setRides] = useState([])
 
   useEffect(() => {
@@ -34,16 +35,28 @@ function App() {
     }
     fetch_data()
   }, [])
+  
+  const flags = {
+    "se": "🇸🇪",
+    "fi": "🇫🇮",
+  }
 
-
+  const stationLang = stations.reduce( (map, cur) => ({ ...map, [cur.id]: cur["text"][lang] }), {} )
   return (
     <div className="App">
       <div>
-        <StationTable stations={stations} />
+        Data language:
+        { ["fi","se"].map( l => (<button key={`lb_${l}`} onClick={()=>setLang(l)}>{flags[l]}</button>) )}
+      </div>
+      <div className="Tables">
+      <div>
+        <StationTable lang={lang} stations={stations} />
 
       </div>
-      <RideTable stations={stations} rides={rides} />
+      <RideTable stationLang={stationLang} rides={rides} />
 
+      </div>
+      
     </div>
   );
 }

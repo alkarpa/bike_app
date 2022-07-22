@@ -3,7 +3,6 @@ package http
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -21,7 +20,7 @@ func TestStation(t *testing.T) {
 		ts.StationService.GetAllFn = func() ([]*bike_app_be.Station, error) {
 			all := make([]*bike_app_be.Station, 0, 3)
 			for i := 0; i < 3; i++ {
-				station := &bike_app_be.Station{Id: i, Name: fmt.Sprintf("Test Station %d", i)}
+				station := &bike_app_be.Station{Id: i}
 				all = append(all, station)
 			}
 			return all, nil

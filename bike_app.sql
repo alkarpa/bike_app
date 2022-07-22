@@ -29,7 +29,15 @@ CREATE TABLE `ride` (
   `return_station` int(11) NOT NULL,
   `distance` int(11) NOT NULL,
   `duration` int(11) NOT NULL,
-  PRIMARY KEY (`departure`,`return`,`departure_station`,`return_station`)
+  PRIMARY KEY (`departure`,`return`,`departure_station`,`return_station`),
+  CONSTRAINT `fk_ride_departure_station`
+    FOREIGN KEY (departure_station) REFERENCES station (id)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+  CONSTRAINT `fk_ride_return_station`
+    FOREIGN KEY (return_station) REFERENCES station (id)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -51,13 +59,36 @@ DROP TABLE IF EXISTS `station`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `station` (
   `id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `operator` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `capacity` int(11) NOT NULL,
+  `x` double NOT NULL,
+  `y` double NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `station`
+-- Table structure for table `station_lang_field`
+--
+
+DROP TABLE IF EXISTS `station_lang_field`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `station_lang_field` (
+  `id` int(11) NOT NULL,
+  `lang` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`,`lang`,`key`),
+  CONSTRAINT `fk_station_lang`
+    FOREIGN KEY (id) REFERENCES station (id)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `station_lang_field`
 --
 
 LOCK TABLES `station` WRITE;

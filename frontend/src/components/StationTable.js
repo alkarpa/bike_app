@@ -53,26 +53,24 @@ const PageEnumeration = ({ page, setPage, page_size, content_array }) => {
     )
 }
 
-const StationTable = ({ stations }) => {
+const StationTable = ({ lang, stations }) => {
     const [page, setPage] = useState(0)
-
-    const station_array = Object.keys(stations).map(key => ({ id: key, name: stations[key] }))
 
     const page_size = 10
     const station_low = page * page_size
-    const station_high = Math.min((page + 1) * page_size, station_array.length)
-    const page_slice = station_array.slice(station_low, station_high)
+    const station_high = Math.min((page + 1) * page_size, stations.length)
+    const page_slice = stations.slice(station_low, station_high)
 
     return (
         <div style={{ width: '24em' }}>
             <h2>Stations</h2>
-            <PageEnumeration page={page} setPage={setPage} page_size={page_size} content_array={station_array} />
+            <PageEnumeration page={page} setPage={setPage} page_size={page_size} content_array={stations} />
             <table style={{ width: '100%' }}>
-                <caption>Showing stations from {station_low + 1} to {station_high} out of {station_array.length}</caption>
+                <caption>Showing stations from {station_low + 1} to {station_high} out of {stations.length}</caption>
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Station</th>
+                        <th>Name</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,7 +78,7 @@ const StationTable = ({ stations }) => {
                         page_slice.map(station => (
                             <tr key={`station_tr_${station.id}`}>
                                 <td>{station.id}</td>
-                                <td>{station.name}</td>
+                                <td>{station.text[lang].name}</td>
                             </tr>
                         ))
                     }

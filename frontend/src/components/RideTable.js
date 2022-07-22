@@ -1,5 +1,5 @@
 
-const RideTable = ({stations, rides}) => {
+const RideTable = ({stationLang, rides}) => {
 
     if (!rides || rides.length < 1) {
         return (
@@ -30,8 +30,8 @@ const RideTable = ({stations, rides}) => {
               <tr key={`ride_${ride.departure}_${ride.return}`}>
                 <td>{ride.departure}</td>
                 <td>{ride.return}</td>
-                <td>{stations[ride.departure_station_id]}</td>
-                <td>{stations[ride.return_station_id]}</td>
+                <td>{stationLang[ride.departure_station_id]?.name}</td>
+                <td>{stationLang[ride.return_station_id]?.name}</td>
                 <td>{m2km(ride.distance)}</td>
                 <td>{secondsToMinutes(ride.duration)}</td>
               </tr>

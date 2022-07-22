@@ -25,7 +25,6 @@ func statementValues(number_of_values uint) string {
 }
 
 func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
-	// duration is temporarily used to count duplicates
 	const sql_insert = "INSERT INTO ride  VALUES %s ON DUPLICATE KEY UPDATE departure=departure"
 	const number_of_values = 6
 	stmt_values := statementValues(number_of_values)
@@ -37,7 +36,6 @@ func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
 
 		valueStrings = append(valueStrings, stmt_values)
 
-		// duration is temporarily used to count duplicates
 		values = append(values, ride.Departure, ride.Return, ride.Departure_station_id, ride.Return_station_id, ride.Distance, ride.Duration)
 	}
 	insert_query := fmt.Sprintf(sql_insert, strings.Join(valueStrings, ","))

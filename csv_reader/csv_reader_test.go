@@ -125,3 +125,45 @@ func TestBOM(t *testing.T) {
 		}
 	})
 }
+func TestQuotations(t *testing.T) {
+	keys, data, err := ReadFromCSV("test_data/quotations.csv")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	t.Run("Quoted with comma key", func(t *testing.T) {
+		received := keys[0]
+		expected := "A quoted, comma thing"
+		if received != expected {
+			t.Fatalf("expected %s, received %s", expected, received)
+		}
+	})
+	t.Run("Quoted with comma data", func(t *testing.T) {
+		received := data[0][0]
+		expected := "A quoted, comma thing"
+		if received != expected {
+			t.Fatalf("expected %s, received %s", expected, received)
+		}
+	})
+	t.Run("Data[1]", func(t *testing.T) {
+		received := data[0][1]
+		expected := "Unquoted mess"
+		if received != expected {
+			t.Fatalf("expected %s, received %s", expected, received)
+		}
+	})
+	t.Run("Data[2]", func(t *testing.T) {
+		received := data[0][2]
+		expected := "5"
+		if received != expected {
+			t.Fatalf("expected %s, received %s", expected, received)
+		}
+	})
+	t.Run("Data[5]", func(t *testing.T) {
+		received := data[0][5]
+		expected := "Quotation \"in\" the middle"
+		if received != expected {
+			t.Fatalf("expected %s, received %s", expected, received)
+		}
+	})
+}

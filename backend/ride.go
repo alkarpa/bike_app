@@ -27,7 +27,9 @@ func stringsToInts(strings []string) []int {
 	return ints
 }
 
-func NewRidesFromDataSlice(keys []string, data [][]string) [](*Ride) {
+func NewRidesFromDataSlice(station_ids map[int]struct{}, keys []string, data [][]string) [](*Ride) {
+	info := make(map[string][]int)
+
 	//fmt.Printf("NewRidesFromDataSlice, len(data):%d\n", len(data))
 	d, r, did, rid, dis, dur := -1, -1, -1, -1, -1, -1
 	for i, key := range keys {
@@ -50,7 +52,17 @@ func NewRidesFromDataSlice(keys []string, data [][]string) [](*Ride) {
 	const min_duration = 10
 	const min_distance = 10
 
-	rideFilter := func(ride *Ride) bool {
+	rideFilter := func(ride *Ride, i int) bool {
+		if _, ok := station_ids[ride.Departure_station_id]; !ok {
+			info["skipped"] = append(info["skipped"], i)
+			info["station_id_err"] = append(info["station_id_err"], ride.Departure_station_id)
+			return false
+		}
+		if _, ok := station_ids[ride.Return_station_id]; !ok {
+			info["skipped"] = append(info["skipped"], i)
+			info["station_id_err"] = append(info["station_id_err"], ride.Return_station_id)
+			return false
+		}
 		if ride.Duration < min_duration {
 			return false
 		}
@@ -62,7 +74,7 @@ func NewRidesFromDataSlice(keys []string, data [][]string) [](*Ride) {
 
 	//fmt.Printf("%d,%d,%d,%d,%d,%d\n", d, r, did, rid, dis, dur)
 	rides := make([](*Ride), 0, len(data))
-	for _, row := range data {
+	for i, row := range data {
 		ints := stringsToInts(row)
 
 		ride := &Ride{
@@ -73,11 +85,12 @@ func NewRidesFromDataSlice(keys []string, data [][]string) [](*Ride) {
 			Distance:             ints[dis],
 			Duration:             ints[dur],
 		}
-		if rideFilter(ride) {
+		if rideFilter(ride, i) {
 			rides = append(rides, ride)
 		}
 
 	}
+	//fmt.Println(info)
 	return rides
 }
 

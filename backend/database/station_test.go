@@ -2,6 +2,8 @@ package database
 
 import (
 	"testing"
+
+	"alkarpa.fi/bike_app_be"
 )
 
 func TestStationService(t *testing.T) {
@@ -20,10 +22,10 @@ func TestStationService(t *testing.T) {
 	*/
 
 	t.Run("Insert 2 stations", func(t *testing.T) {
-		stations := make([][]string, 2)
+		stations := make([]*bike_app_be.Station, 2)
 		//fmt.Println("Before assignment")
-		stations[0] = []string{"1", "Boston"}
-		stations[1] = []string{"2", "Nyark"}
+		stations[0] = &bike_app_be.Station{}
+		stations[1] = &bike_app_be.Station{}
 		//fmt.Println("Before insert call")
 		err := station_service.InsertStations(stations)
 		if err != nil {
