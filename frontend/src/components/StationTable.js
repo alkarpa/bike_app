@@ -1,4 +1,6 @@
 import { useState } from "react"
+import StationMap from "./StationMap"
+import StationView from "./StationView"
 
 const PageButton = ({ activePage, setActivePage, buttonPage }) => {
 
@@ -55,11 +57,24 @@ const PageEnumeration = ({ page, setPage, page_size, content_array }) => {
 
 const StationTable = ({ lang, stations }) => {
     const [page, setPage] = useState(0)
+    const [station, setStation] = useState(undefined)
+
+    if (station !== undefined) {
+        const index = stations.findIndex( s => s.id === station.id )
+        return (
+            <div>
+                <StationView station={station} setStation={setStation} lang={lang}/>
+                <StationMap stations={stations} active_low={index} active_high={index+1} />
+            </div>
+        )
+    }
 
     const page_size = 10
     const station_low = page * page_size
     const station_high = Math.min((page + 1) * page_size, stations.length)
     const page_slice = stations.slice(station_low, station_high)
+
+    
 
     return (
         <div style={{ width: '24em' }}>
@@ -76,7 +91,7 @@ const StationTable = ({ lang, stations }) => {
                 <tbody>
                     {
                         page_slice.map(station => (
-                            <tr key={`station_tr_${station.id}`}>
+                            <tr key={`station_tr_${station.id}`} onClick={() => setStation(station)}>
                                 <td>{station.id}</td>
                                 <td>{station.text[lang].name}</td>
                             </tr>
@@ -84,7 +99,7 @@ const StationTable = ({ lang, stations }) => {
                     }
                 </tbody>
             </table>
-
+            <StationMap stations={stations} active_low={station_low} active_high={station_high} />
         </div>
     )
 }
