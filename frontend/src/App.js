@@ -14,49 +14,53 @@ const getStations = async () => {
   return stations
 }
 
-const getRides = async (parameters = {}) => {
-  const ride_api = `${API_path}/ride/`
-  let response = await fetch(ride_api)
-  let json = await response.json()
-  return json
-}
 
-function App() {
+const views = ["stations", "rides"]
+
+const App = () => {
   const [lang, setLang] = useState('fi')
   const [stations, setStations] = useState([])
-  const [rides, setRides] = useState([])
+  const [view, setView] = useState(views[0])
 
   useEffect(() => {
     const fetch_data = async () => {
       let stations = await getStations()
-      let initial_rides = await getRides()
       setStations(stations)
-      setRides(initial_rides)
     }
     fetch_data()
   }, [])
-  
+
   const flags = {
     "se": "🇸🇪",
     "fi": "🇫🇮",
   }
 
-  const stationLang = stations.reduce( (map, cur) => ({ ...map, [cur.id]: cur["text"][lang] }), {} )
+  const stationLang = stations.reduce((map, cur) => ({ ...map, [cur.id]: cur["text"][lang] }), {})
   return (
     <div className="App">
-      <div>
-        Data language:
-        { ["fi","se"].map( l => (<button key={`lb_${l}`} onClick={()=>setLang(l)}>{flags[l]}</button>) )}
-      </div>
-      <div className="Tables">
-      <div>
-        <StationTable lang={lang} stations={stations} />
+      <header>
+        <div>
+          Data language:
+          {["fi", "se"].map(l => (<button key={`lb_${l}`} onClick={() => setLang(l)}>{flags[l]}</button>))}
+        </div>
+        <div style={{display: 'grid', gridTemplateColumns: `repeat(${views.length}, 1fr)`}}>
+          {views.map(v => (<button key={`view_${v}`} 
+            onClick={() => setView(v)}
+            style={ view === v ? {backgroundColor: 'white', borderBottom: 'none'} : {} }
+            >{v}</button>))}
+        </div>
+      </header>
+      <div className="View">
+        {
+          view === 'stations'
+            ? <StationTable lang={lang} stations={stations} />
+            : view === 'rides' 
+            ? <RideTable stationLang={stationLang} /> 
+            : <></>
+        }
 
       </div>
-      <RideTable stationLang={stationLang} rides={rides} />
 
-      </div>
-      
     </div>
   );
 }

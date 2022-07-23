@@ -1,4 +1,6 @@
+
 const StationMap = ({stations, active_low, active_high}) => {
+
     if (stations.length === 0) {
         return <></>
     }
@@ -12,9 +14,9 @@ const StationMap = ({stations, active_low, active_high}) => {
     const diff_y = max_y-min_y
     //console.log('min_y', min_y, 'max_y', max_y,'diff',diff_y)
 
-    const scale = 400
+    const scale = 90
     //console.log('diff_y/diff_x', diff_y/diff_x, 'y_scale', scale * (diff_y/diff_x))
-    const adjusted_coords = stations.map( s => ({ x: (s.x - min_x) / diff_x * scale, y: (s.y - min_y) / diff_y * scale * (diff_y/diff_x) }) )
+    const adjusted_coords = stations.map( s => ({ x: (s.x - min_x) / diff_x * scale, y: (s.y - min_y) / diff_y * scale }) )
     //console.log(adjusted_coords)
 
     const color = (index) => (
@@ -22,10 +24,10 @@ const StationMap = ({stations, active_low, active_high}) => {
     )
 
     return (
-        <svg style={{width: `${scale+10}px`, height: `${scale * (diff_y/diff_x)+10}px`, border: '1px brown solid'}}>
+        <svg style={{width: `${scale}%`, aspectRatio: diff_x/diff_y, border: '1px brown solid'}}>
                 {
                     adjusted_coords.map( (c,i) => (
-                        <rect key={`coord_${i}_${c.x}`} x={c.x-1+5} y={c.y-1+5} width={2} height={2} fill={color(i)} />
+                        <rect key={`coord_${i}_${c.x}`} x={`${c.x+5}%`} y={`${100-(c.y+5)}%`} width={3} height={3} fill={color(i)} />
                     ) )
                 }
             </svg>

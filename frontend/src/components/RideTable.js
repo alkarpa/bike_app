@@ -1,5 +1,24 @@
+import { useState, useEffect } from "react"
 
-const RideTable = ({stationLang, rides}) => {
+const API_path = "http://localhost:8080"
+
+const getRides = async (parameters = {}) => {
+  const ride_api = `${API_path}/ride/`
+  let response = await fetch(ride_api)
+  let json = await response.json()
+  return json
+}
+
+const RideTable = ({stationLang}) => {
+  const [rides, setRides] = useState([])
+
+  useEffect(() => {
+    const fetch_data = async () => {
+      let initial_rides = await getRides()
+      setRides(initial_rides)
+    }
+    fetch_data()
+  }, [])
 
     if (!rides || rides.length < 1) {
         return (

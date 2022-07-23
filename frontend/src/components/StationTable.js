@@ -77,14 +77,14 @@ const StationTable = ({ lang, stations }) => {
     
 
     return (
-        <div style={{ width: '24em' }}>
+        <div>
             <h2>Stations</h2>
             <PageEnumeration page={page} setPage={setPage} page_size={page_size} content_array={stations} />
-            <table style={{ width: '100%' }}>
+            <table style={{ minWidth: '20em',maxWidth: '70em' }}>
                 <caption>Showing stations from {station_low + 1} to {station_high} out of {stations.length}</caption>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th style={{width: '5em'}}>ID</th>
                         <th>Name</th>
                     </tr>
                 </thead>
