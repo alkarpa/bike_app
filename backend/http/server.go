@@ -47,6 +47,7 @@ func (server *Server) registerRideRoutes(r *mux.Router) {
 }
 func (server *Server) registerStationRoutes(r *mux.Router) {
 	r.HandleFunc("/", server.getStations()).Methods("GET")
+	r.HandleFunc("/{id}", server.getStationDetails()).Methods("GET")
 }
 
 func (server *Server) ListenAndServe() {

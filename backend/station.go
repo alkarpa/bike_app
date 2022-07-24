@@ -112,4 +112,20 @@ func NewStationLangFieldFromRow(
 
 type StationService interface {
 	GetAll() ([]*Station, error)
+	GetDetails(int) (*Stats, error)
+}
+
+type Stat_count_avg struct {
+	Count            int               `json:"count"`
+	Average_distance float64           `json:"average_distance"`
+	Top_connections  []Stat_connection `json:"top_connections"`
+}
+type Stat_connection struct {
+	Station_id int `json:"station_id"`
+	Count      int `json:"count"`
+}
+
+type Stats struct {
+	Departing map[string]*Stat_count_avg
+	Returning map[string]*Stat_count_avg
 }

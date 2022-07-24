@@ -49,6 +49,84 @@ func (s *StationService) GetAll() ([]*bike_app_be.Station, error) {
 	return stations, nil
 }
 
+func (s *StationService) getStatCountAVG(statmap *map[string]*bike_app_be.Stat_count_avg, query string) error {
+	rows, err := s.db.Query(query)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		yearmonth := ""
+		r := &bike_app_be.Stat_count_avg{}
+		if err = rows.Scan(&yearmonth, &r.Count, &r.Average_distance); err != nil {
+			return err
+		}
+		(*statmap)[yearmonth] = r
+	}
+	if err = rows.Err(); err != nil {
+		return err
+	}
+	return nil
+}
+func (s *StationService) getTopConnections(statmap *map[string]*bike_app_be.Stat_count_avg, query string) error {
+	rows, err := s.db.Query(query)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		yearmonth := ""
+		r := bike_app_be.Stat_connection{}
+		if err = rows.Scan(&yearmonth, &r.Station_id, &r.Count); err != nil {
+			return err
+		}
+		if _, ok := (*statmap)[yearmonth]; ok {
+			(*statmap)[yearmonth].Top_connections = append((*statmap)[yearmonth].Top_connections, r)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *StationService) GetDetails(id int) (*bike_app_be.Stats, error) {
+	departing := make(map[string]*bike_app_be.Stat_count_avg)
+	returning := make(map[string]*bike_app_be.Stat_count_avg)
+
+	const dep, ret = "departure", "return"
+	helpers := []*stat_query_helper{
+		{target: &departing, a: dep, b: ret, id: id},
+		{target: &returning, a: ret, b: dep, id: id},
+	}
+
+	queries := []stat_query{}
+	for _, h := range helpers {
+		queries = append(queries,
+			&query_count_average{h},
+			&query_top_connections{h},
+		)
+	}
+
+	for _, query := range queries {
+		for _, monthly := range []bool{false, true} {
+			if err := query.make_query(s, monthly); err != nil {
+				return nil, err
+			}
+		}
+
+	}
+
+	stats := &bike_app_be.Stats{
+		Departing: departing,
+		Returning: returning,
+	}
+	return stats, nil
+
+}
+
 func (s *StationService) GetAllStationLangFields() (map[int][]bike_app_be.StationLangField, error) {
 	rows, err := s.db.Query("SELECT * FROM station_lang_field")
 	if err != nil {
