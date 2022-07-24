@@ -53,7 +53,7 @@ const App = () => {
       <div className="View">
         {
           view === 'stations'
-            ? <StationTable lang={lang} stations={stations} />
+            ? <StationTable lang={lang} stations={stations} stationLang={stationLang}/>
             : view === 'rides' 
             ? <RideTable stationLang={stationLang} /> 
             : <></>
