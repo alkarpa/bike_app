@@ -8,7 +8,10 @@ import (
 func (server *Server) getRides() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		rides, err := server.RideService.GetRides()
+		urlParams := r.URL.Query()
+		//fmt.Printf("Query - %s", urlParams)
+
+		rides, err := server.RideService.GetRides(urlParams)
 		if err != nil {
 			http.Error(w, "error retrieving stations", http.StatusInternalServerError)
 		}

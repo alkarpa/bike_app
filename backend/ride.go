@@ -96,5 +96,5 @@ func NewRidesFromDataSlice(station_ids map[int]struct{}, keys []string, data [][
 
 type RideService interface {
 	CreateRide(r *Ride) error
-	GetRides() ([]*Ride, error)
+	GetRides(p map[string][]string) ([]*Ride, error)
 }
