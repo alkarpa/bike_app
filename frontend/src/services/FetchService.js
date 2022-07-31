@@ -2,7 +2,7 @@ const API_path = "http://localhost:8080"
 
 const get_fetch = async (api, param_str = '') => {
     const url = `${API_path}/${api}/${param_str}`
-    const ret = { list: [] }
+    const ret = { data: [] }
     try {
         const response = await fetch(url)
 
@@ -11,7 +11,7 @@ const get_fetch = async (api, param_str = '') => {
         }
 
         const json = await response.json()
-        ret.list = json
+        ret.data = json
     } catch (error) {
         ret.error = { msg: error }
     }

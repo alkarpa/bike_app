@@ -51,7 +51,7 @@ const RideTable = ({ stationLang }) => {
     </th>
   )
 
-  const rides_list = rides.list
+  const rides_list = rides.data.rides
 
   const PageButtons = () => (
     <div style={{textAlign: 'center', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)'}}>
@@ -74,7 +74,7 @@ const RideTable = ({ stationLang }) => {
 
     return (
       <table style={{ fontFamily: 'monospace' }}>
-        <caption>Showing rides {'['}{first_index},{first_index + showing_count}{']'}</caption>
+        <caption>Showing rides {'['}{first_index},{first_index + showing_count}{']'} of {rides.data.count}</caption>
         <thead>
           <tr>
             <OrderableTh order={parameters['order']} changeOrder={changeOrder} orderable="departure">Departure</OrderableTh>
@@ -88,7 +88,7 @@ const RideTable = ({ stationLang }) => {
         <tbody>
           {
             rides_list.map(ride => (
-              <tr key={`ride_${ride.departure}_${ride.return}`}>
+              <tr key={`ride_${ride.departure}_${ride.return}_${ride.departure_station_id}_${ride.return_station_id}`}>
                 <td>{ride.departure}</td>
                 <td>{ride.return}</td>
                 <td>{stationLang[ride.departure_station_id]?.name}</td>

@@ -51,7 +51,7 @@ const App = () => {
       return <ErrorMessage error={stations.error} />
     }
 
-    const stations_list = stations.list
+    const stations_list = stations.data
     const stationLang = stations_list.reduce((map, cur) => ({ ...map, [cur.id]: cur["text"][lang] }), {})
     return (
       <div className="View">

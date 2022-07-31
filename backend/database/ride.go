@@ -9,12 +9,18 @@ import (
 	"alkarpa.fi/bike_app_be"
 )
 
+const unset_ride_count = -1
+
 type RideService struct {
-	db *sql.DB
+	db         *sql.DB
+	ride_count int
 }
 
 func NewRideService(db *sql.DB) *RideService {
-	return &RideService{db: db}
+	return &RideService{
+		db:         db,
+		ride_count: unset_ride_count,
+	}
 }
 
 func statementValues(number_of_values uint) string {
@@ -23,6 +29,29 @@ func statementValues(number_of_values uint) string {
 		qms = append(qms, "?")
 	}
 	return fmt.Sprintf("(%s)", strings.Join(qms, ","))
+}
+
+func (rs *RideService) GetCount() (int, error) {
+	// optimization trick
+	if rs.ride_count != unset_ride_count {
+		return rs.ride_count, nil
+	}
+
+	rows, err := rs.db.Query("SELECT COUNT(*) FROM ride")
+	if err != nil {
+		return unset_ride_count, err
+	}
+	defer rows.Close()
+	var count int
+	if rows.Next() {
+		if err = rows.Scan(&count); err != nil {
+			return unset_ride_count, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return unset_ride_count, err
+	}
+	return count, nil
 }
 
 func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
@@ -50,6 +79,7 @@ func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
 	if err != nil {
 		return err
 	}
+	rs.ride_count = unset_ride_count
 	return nil
 }
 
