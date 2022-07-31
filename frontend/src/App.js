@@ -2,18 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import RideTable from './components/RideTable';
 import StationTable from './components/StationTable';
-
-const API_path = "http://localhost:8080"
-
-const getStations = async () => {
-  const station_api = `${API_path}/station/`
-  let response = await fetch(station_api)
-  let json = await response.json()
-
-  const stations = json //.reduce((map, cur) => ({ ...map, [cur.id]: cur.name }), {})
-  return stations
-}
-
+import fetch_service from './services/FetchService';
 
 const views = ["stations", "rides"]
 
@@ -24,8 +13,10 @@ const App = () => {
 
   useEffect(() => {
     const fetch_data = async () => {
-      let stations = await getStations()
-      setStations(stations)
+      let stations = await fetch_service.getStations()
+      if (!stations.error) {
+        setStations(stations.list)
+      }
     }
     fetch_data()
   }, [])

@@ -1,26 +1,6 @@
 import { useState, useEffect } from "react"
+import fetch_service from "../services/FetchService"
 
-const API_path = "http://localhost:8080"
-
-const getRides = async (parameters = {}) => {
-
-  let param = []
-  for (let p of ['page', 'order']) {
-    if (parameters[p]) {
-      param = param.concat(`${p}=${parameters[p]}`)
-    }
-  }
-
-  let param_str = param.length > 0
-    ? `?${param.join('&')}`
-    : ''
-
-  const ride_api = `${API_path}/ride/${param_str}`
-  //console.log('ride_api', ride_api)
-  let response = await fetch(ride_api)
-  let json = await response.json()
-  return json
-}
 
 const RideTable = ({ stationLang }) => {
   const [rides, setRides] = useState([])
@@ -28,10 +8,11 @@ const RideTable = ({ stationLang }) => {
   const [parameters, setParameters] = useState({})
 
   useEffect(() => {
-    //console.log('rideTable useEffect')
     const fetch_data = async () => {
-      let initial_rides = await getRides(parameters)
-      setRides(initial_rides)
+      let fetched_rides = await fetch_service.getRides(parameters)
+      if ( !fetched_rides.error ) {
+        setRides(fetched_rides.list)
+      }
     }
     fetch_data()
   }, [parameters])
