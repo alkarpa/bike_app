@@ -1,28 +1,29 @@
 import { useState, useEffect } from "react"
 import fetch_service from "../services/FetchService"
+import ErrorMessage from "./ErrorMessage"
+import LoadingPlaceholder from "./LoadingPlaceholder"
 
 
 const RideTable = ({ stationLang }) => {
-  const [rides, setRides] = useState([])
+  const [rides, setRides] = useState({ loading: true })
   const [page, setPage] = useState(0)
   const [parameters, setParameters] = useState({})
 
   useEffect(() => {
     const fetch_data = async () => {
       let fetched_rides = await fetch_service.getRides(parameters)
-      if ( !fetched_rides.error ) {
-        setRides(fetched_rides.list)
-      }
+      setRides(fetched_rides)
     }
     fetch_data()
   }, [parameters])
 
 
-  if (!rides || rides.length < 1) {
+  if (rides.loading) {
+    return (<LoadingPlaceholder />)
+  }
+  if (rides.error) {
     return (
-      <div>
-        Nothing to show
-      </div>
+      <ErrorMessage error={rides.error} />
     )
   }
 
@@ -34,37 +35,46 @@ const RideTable = ({ stationLang }) => {
 
   const changeOrder = (o) => {
     const ordering = (o === parameters.order) ? `${o}_desc` : o
-    setParameters({...parameters, order: ordering})
+    setParameters({ ...parameters, order: ordering })
   }
 
   const m2km = (m) => (Math.floor(m / 1000))
   const secondsToMinutes = (s) => (Math.floor(s / 60))
 
-  const OrderableTh = ({order, changeOrder, orderable, children}) => (
+  const OrderableTh = ({ order, changeOrder, orderable, children }) => (
     <th onClick={() => changeOrder(orderable)}>
       {children}
-      { order === orderable
-      ? <span>&uarr;</span>
-      : order === orderable+"_desc" ? <span>&darr;</span> : <></>
-     }
+      {order === orderable
+        ? <span>&uarr;</span>
+        : order === orderable + "_desc" ? <span>&darr;</span> : <></>
+      }
     </th>
   )
 
-  return (
-    <div>
+  const rides_list = rides.list
 
-      <div>
-        {page > 0
-          ? <>
+  const PageButtons = () => (
+    <div style={{textAlign: 'center', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)'}}>
+      {page > 0
+        ? <>
           <button onClick={() => changePage(0)}>First</button>
           <button onClick={() => changePage(page - 1)}>Prev</button>
-          </>
-          : <></>
-        }
-        <span>Page {page}</span>
-        <button onClick={() => changePage(page + 1)}>Next</button>
-      </div>
+        </>
+        : <><div></div><div></div></>
+      }
+      <span>Page {page + 1}</span>
+      <button onClick={() => changePage(page + 1)}>Next</button>
+    </div>
+  )
+
+  const RTable = () => {
+    const page_size = 100
+    const showing_count = rides_list.length - 1
+    const first_index = page * page_size + 1
+
+    return (
       <table style={{ fontFamily: 'monospace' }}>
+        <caption>Showing rides {'['}{first_index},{first_index + showing_count}{']'}</caption>
         <thead>
           <tr>
             <OrderableTh order={parameters['order']} changeOrder={changeOrder} orderable="departure">Departure</OrderableTh>
@@ -77,7 +87,7 @@ const RideTable = ({ stationLang }) => {
         </thead>
         <tbody>
           {
-            rides.map(ride => (
+            rides_list.map(ride => (
               <tr key={`ride_${ride.departure}_${ride.return}`}>
                 <td>{ride.departure}</td>
                 <td>{ride.return}</td>
@@ -91,6 +101,13 @@ const RideTable = ({ stationLang }) => {
 
         </tbody>
       </table>
+    )
+  }
+
+  return (
+    <div>
+      <PageButtons />
+      <RTable />
     </div>
 
   )

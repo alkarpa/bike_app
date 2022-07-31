@@ -7,7 +7,7 @@ const get_fetch = async (api, param_str = '') => {
         const response = await fetch(url)
 
         if (!response.ok) {
-            throw new Error(response.error)
+            throw new Error(response.status)
         }
 
         const json = await response.json()
@@ -19,7 +19,6 @@ const get_fetch = async (api, param_str = '') => {
 }
 
 const getRides = async (parameters = {}) => {
-
     let param_str = buildRideParaStr(parameters)
     return get_fetch('ride', param_str)
 }
