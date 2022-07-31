@@ -19,3 +19,15 @@ table tr:nth-child(2n) {
   display: grid;
   grid-template-rows: min-content 1fr;
 }
+
+@keyframes rotating {
+  from { transform: rotate(0); }
+  to { transform: rotate(360deg); }
+}
+
+.Rotating {
+  animation-name: rotating;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-play-state: running;
+}
