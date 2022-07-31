@@ -52,14 +52,13 @@ const App = () => {
     }
 
     const stations_list = stations.data
-    const stationLang = stations_list.reduce((map, cur) => ({ ...map, [cur.id]: cur["text"][lang] }), {})
     return (
       <div className="View">
         {
           view === 'stations'
-            ? <StationTable lang={lang} stations={stations_list} stationLang={stationLang} />
+            ? <StationTable lang={lang} stations={stations_list} />
             : view === 'rides'
-              ? <RideTable stationLang={stationLang} />
+              ? <RideTable lang={lang}/>
               : <></>
         }
 

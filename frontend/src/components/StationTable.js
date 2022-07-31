@@ -76,7 +76,7 @@ const StationFilters = ({filters, setFilters}) => {
     )
 }
 
-const StationTable = ({ lang, stations, stationLang }) => {
+const StationTable = ({ lang, stations }) => {
     const [page, setPage] = useState(0)
     const [station, setStation] = useState(undefined)
     const [filters, setFilters] = useState({})
@@ -86,8 +86,8 @@ const StationTable = ({ lang, stations, stationLang }) => {
         const index = stations.findIndex( s => s.id === station.id )
         return (
             <div>
-                <StationView station={station} setStation={setStation} lang={lang} stationLang={stationLang}/>
-                <StationMap stations={stations} active_low={index} active_high={index+1} />
+                <StationView station={station} setStation={setStation} lang={lang} stations={stations}/>
+                <StationMap stations={stations} filtered={stations} active_low={index} active_high={index+1} />
             </div>
         )
     }
@@ -147,7 +147,7 @@ const StationTable = ({ lang, stations, stationLang }) => {
                     }
                 </tbody>
             </table>
-            <StationMap stations={filtered} active_low={station_low} active_high={station_high} />
+            <StationMap stations={stations} filtered={filtered} active_low={station_low} active_high={station_high} />
         </div>
     )
 }

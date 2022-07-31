@@ -25,9 +25,11 @@ func (sqf *select_query_friend) setupParamsPage(parameters map[string][]string) 
 		page, err := strconv.Atoi(page_params[0])
 		if err != nil || page < 1 {
 			sqf.pagination = default_limit
+			return
 		}
 		const page_limit_offset = "LIMIT %d OFFSET %d"
 		sqf.pagination = fmt.Sprintf(page_limit_offset, page_size, page_size*page)
+		return
 	}
 	sqf.pagination = default_limit
 }
@@ -86,6 +88,7 @@ func (sqf *select_query_friend) setupLang(parameters map[string][]string) {
 		for _, al := range accepted_languages {
 			if al == lang[0] {
 				sqf.language = lang[0]
+				return
 			}
 		}
 	}

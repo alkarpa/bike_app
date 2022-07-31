@@ -93,7 +93,7 @@ const StationsStats = ({ stats, stationLang }) => {
     )
 }
 
-const StationView = ({ station, setStation, lang, stationLang }) => {
+const StationView = ({ station, setStation, lang, stations }) => {
     const [stats, setStats] = useState({})
 
     useEffect(() => {
@@ -104,6 +104,7 @@ const StationView = ({ station, setStation, lang, stationLang }) => {
         fetchData()
     }, [station])
 
+    const stationLang = stations.reduce((map, cur) => ({ ...map, [cur.id]: cur["text"][lang] }), {})
     return (
         <div style={{ margin: '1em', border: '1px gray solid' }}>
             <button onClick={() => setStation(undefined)}

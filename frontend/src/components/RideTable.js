@@ -4,10 +4,10 @@ import ErrorMessage from "./ErrorMessage"
 import LoadingPlaceholder from "./LoadingPlaceholder"
 
 
-const RideTable = ({ stationLang }) => {
+const RideTable = ({lang}) => {
   const [rides, setRides] = useState({ loading: true })
   const [page, setPage] = useState(0)
-  const [parameters, setParameters] = useState({})
+  const [parameters, setParameters] = useState({lang:lang})
   const [processing, setProcessing] = useState(true)
 
   useEffect(() => {
@@ -119,8 +119,8 @@ const RideTable = ({ stationLang }) => {
               <tr key={`ride_${ride.departure}_${ride.return}_${ride.departure_station_id}_${ride.return_station_id}`}>
                 <td><DateTime datestring={ride.departure} /></td>
                 <td><DateTime datestring={ride.return} /></td>
-                <td>{stationLang[ride.departure_station_id]?.name}</td>
-                <td>{stationLang[ride.return_station_id]?.name}</td>
+                <td>{ride.departure_station_name}</td>
+                <td>{ride.return_station_name}</td>
                 <td>{m2km(ride.distance)} km</td>
                 <td>{secondsToMinutes(ride.duration)} min</td>
               </tr>
