@@ -82,14 +82,21 @@ func (rs *RideService) getParamsOrdering(parameters map[string][]string) string 
 			"duration",
 		}
 		order_string := "ORDER BY %s"
+		desc := "desc"
 		orderings := make([]string, 0, len(order_params))
 		for _, ordering := range order_params {
 			parts := strings.Split(ordering, "_")
 			for _, accepted_value := range accepted_values {
-				if parts[0] == accepted_value {
-					query_ord := accepted_value
-					if len(parts) > 1 && parts[1] == "desc" {
-						query_ord += " desc"
+				q_value := parts[0]
+				desc_pos := 1
+				if len(parts) > 1 && parts[1] != desc {
+					q_value += "_" + parts[1]
+					desc_pos++
+				}
+				if q_value == accepted_value {
+					query_ord := "`" + accepted_value + "`"
+					if len(parts) == desc_pos+1 && parts[desc_pos] == desc {
+						query_ord += " " + desc
 					}
 					orderings = append(orderings, query_ord)
 					break
@@ -119,7 +126,7 @@ func (rs *RideService) GetRides(parameters map[string][]string) ([]*bike_app_be.
 			"AND station_lang_field.value LIKE CONCAT('%',?,'%') ) a " +
 			"ON a.id IN (departure_station, return_station) "
 		values = append(values, search[0])
-		fmt.Println(values)
+		//fmt.Println(values)
 	}
 	query += rs.getParamsOrdering(parameters) + " "
 	query += rs.getParamsPage(parameters) + " "

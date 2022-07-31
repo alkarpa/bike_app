@@ -17,11 +17,10 @@ func TestRide(t *testing.T) {
 
 	t.Run("GetRides", func(t *testing.T) {
 
-		ts.RideService.GetRidesFn = func() ([]*bike_app_be.Ride, error) {
+		ts.RideService.GetRidesFn = func(p map[string][]string) ([]*bike_app_be.Ride, error) {
 			rides := make([]*bike_app_be.Ride, 0, 2)
 			for i := 0; i < 2; i++ {
-				ride := &bike_app_be.Ride{}
-				rides = append(rides, ride)
+				rides = append(rides, &bike_app_be.Ride{})
 			}
 			return rides, nil
 		}
@@ -56,7 +55,7 @@ func TestRide(t *testing.T) {
 	})
 	t.Run("GetRides db error", func(t *testing.T) {
 
-		ts.RideService.GetRidesFn = func() ([]*bike_app_be.Ride, error) {
+		ts.RideService.GetRidesFn = func(p map[string][]string) ([]*bike_app_be.Ride, error) {
 			return nil, errors.New("test error")
 		}
 
