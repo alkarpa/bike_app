@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"alkarpa.fi/bike_app_be"
@@ -87,80 +86,13 @@ func (rs *RideService) CreateRide(ride *bike_app_be.Ride) error {
 	return nil
 }
 
-func (rs *RideService) getParamsPage(parameters map[string][]string) string {
-	const page_size = 100
-	default_limit := fmt.Sprintf("LIMIT %d", page_size)
-	if page_params, found := parameters["page"]; found {
-		page, err := strconv.Atoi(page_params[0])
-		if err != nil || page < 1 {
-			return default_limit
-		}
-		const page_limit_offset = "LIMIT %d OFFSET %d"
-		return fmt.Sprintf(page_limit_offset, page_size, page_size*page)
-	}
-	return default_limit
-}
-
-func (rs *RideService) getParamsOrdering(parameters map[string][]string) string {
-	if order_params, found := parameters["order"]; found {
-		accepted_values := []string{
-			"departure",
-			"return",
-			"departure_station",
-			"return_station",
-			"distance",
-			"duration",
-		}
-		order_string := "ORDER BY %s"
-		desc := "desc"
-		orderings := make([]string, 0, len(order_params))
-		for _, ordering := range order_params {
-			parts := strings.Split(ordering, "_")
-			for _, accepted_value := range accepted_values {
-				q_value := parts[0]
-				desc_pos := 1
-				if len(parts) > 1 && parts[1] != desc {
-					q_value += "_" + parts[1]
-					desc_pos++
-				}
-				if q_value == accepted_value {
-					query_ord := "`" + accepted_value + "`"
-					if len(parts) == desc_pos+1 && parts[desc_pos] == desc {
-						query_ord += " " + desc
-					}
-					orderings = append(orderings, query_ord)
-					break
-				}
-			}
-		}
-		if len(orderings) > 0 {
-			return fmt.Sprintf(order_string, strings.Join(orderings, ","))
-		}
-	}
-	return ""
-}
-
 func (rs *RideService) GetRides(parameters map[string][]string) ([]*bike_app_be.Ride, error) {
-	//fmt.Println(rs.getParamsOrdering(parameters))
-	//fmt.Println(rs.getParamsPage(parameters))
 
-	// TODO: filtering
-	const select_values = "departure, `return`, departure_station, return_station, distance, duration"
+	sqf := newRideSelectQueryFriend(parameters)
 
-	query := fmt.Sprintf("SELECT %[1]s FROM ride ", select_values)
+	//fmt.Println(sqf.buildQuery())
 
-	values := make([]interface{}, 0)
-	if search, search_found := parameters["search"]; search_found {
-		query += " INNER JOIN " +
-			"(SELECT DISTINCT id FROM station_lang_field WHERE station_lang_field.lang = 'fi' " +
-			"AND station_lang_field.value LIKE CONCAT('%',?,'%') ) a " +
-			"ON a.id IN (departure_station, return_station) "
-		values = append(values, search[0])
-		//fmt.Println(values)
-	}
-	query += rs.getParamsOrdering(parameters) + " "
-	query += rs.getParamsPage(parameters) + " "
-	rows, err := rs.db.Query(query, values...)
+	rows, err := rs.db.Query(sqf.buildQuery(), sqf.values...)
 
 	if err != nil {
 		fmt.Println(err)
@@ -171,8 +103,8 @@ func (rs *RideService) GetRides(parameters map[string][]string) ([]*bike_app_be.
 
 	for rows.Next() {
 		var ride = &bike_app_be.Ride{}
-
-		err := rows.Scan(&ride.Departure, &ride.Return, &ride.Departure_station_id, &ride.Return_station_id, &ride.Distance, &ride.Duration)
+		err := rows.Scan(&ride.Departure, &ride.Return, &ride.Departure_station_id, &ride.Return_station_id,
+			&ride.Distance, &ride.Duration, &ride.Departure_station_name, &ride.Return_station_name)
 		if err != nil {
 			return nil, err
 		}

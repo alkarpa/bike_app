@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"alkarpa.fi/bike_app_be"
@@ -20,6 +21,7 @@ func (server *Server) getRides() func(http.ResponseWriter, *http.Request) {
 
 		rides, err := server.RideService.GetRides(urlParams)
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, "error retrieving rides", http.StatusInternalServerError)
 		}
 		response_data := &struct {

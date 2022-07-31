@@ -6,12 +6,14 @@ import (
 )
 
 type Ride struct {
-	Departure            string `db:"departure" json:"departure"`
-	Return               string `db:"return" json:"return"`
-	Departure_station_id int    `db:"departure_station" json:"departure_station_id"`
-	Return_station_id    int    `db:"return_station" json:"return_station_id"`
-	Distance             int    `db:"distance" json:"distance"`
-	Duration             int    `db:"duration" json:"duration"`
+	Departure              string `db:"departure" json:"departure"`
+	Return                 string `db:"return" json:"return"`
+	Departure_station_id   int    `db:"departure_station" json:"departure_station_id"`
+	Return_station_id      int    `db:"return_station" json:"return_station_id"`
+	Distance               int    `db:"distance" json:"distance"`
+	Duration               int    `db:"duration" json:"duration"`
+	Departure_station_name string `json:"departure_station_name"`
+	Return_station_name    string `json:"return_station_name"`
 }
 
 func stringsToInts(strings []string) []int {
