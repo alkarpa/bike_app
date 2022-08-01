@@ -12,31 +12,50 @@ import (
 	csv "alkarpa.fi/csv_reader"
 )
 
+type CSVImporter struct {
+	Path     string
+	Verbose  bool
+	Database *sql.DB
+}
+
+func (impo *CSVImporter) printLn(msg string) {
+	if impo.Verbose {
+		fmt.Println(msg)
+	}
+}
+func (impo *CSVImporter) print(msg string) {
+	if impo.Verbose {
+		fmt.Print(msg)
+	}
+}
+
 // Initial placeholder for testing and base for future modifications
-func ImportFromCSVs() error {
-	fmt.Println("Import from CSV")
+func (impo *CSVImporter) ImportFromCSVs() error {
+	impo.printLn("Import from CSV")
 
-	db, err := OpenSQL()
+	/*
+		db, err := OpenSQL()
+		if err != nil {
+			return err
+		}
+	*/
+
+	impo.printLn("\n-=Stations")
+	station_ids, err := impo.csvStations(impo.Database)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("\n-=Stations")
-	station_ids, err := csvStations(db)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("\n-=Rides")
-	if err = csvRides(db, station_ids); err != nil {
+	impo.printLn("\n-=Rides")
+	if err = impo.csvRides(impo.Database, station_ids); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func csvStations(db *sql.DB) (map[int]struct{}, error) {
-	const directory = "../data/station/"
+func (impo *CSVImporter) csvStations(db *sql.DB) (map[int]struct{}, error) {
+	directory := impo.Path + "station/" // "../data/station/"
 	files, err := os.ReadDir(directory)
 	if err != nil {
 		return nil, err
@@ -47,8 +66,8 @@ func csvStations(db *sql.DB) (map[int]struct{}, error) {
 			continue
 		}
 		path := fmt.Sprintf("%s%s", directory, f.Name())
-		fmt.Printf("Importing %s\n", path)
-		stids, err := addStationsFromCsv(db, path)
+		impo.printLn(fmt.Sprintf("Importing %s\n", path))
+		stids, err := impo.addStationsFromCsv(db, path)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
@@ -58,7 +77,7 @@ func csvStations(db *sql.DB) (map[int]struct{}, error) {
 	}
 	return station_ids, nil
 }
-func addStationsFromCsv(db *sql.DB, path string) (map[int]struct{}, error) {
+func (impo *CSVImporter) addStationsFromCsv(db *sql.DB, path string) (map[int]struct{}, error) {
 	keys, data, err := csv.ReadFromCSV(path)
 	if err != nil {
 		return nil, err
@@ -77,8 +96,8 @@ func addStationsFromCsv(db *sql.DB, path string) (map[int]struct{}, error) {
 	return station_id_set, station_service.insertStationLangFields(stations)
 }
 
-func csvRides(db *sql.DB, station_ids map[int]struct{}) error {
-	const directory = "../data/ride/"
+func (impo *CSVImporter) csvRides(db *sql.DB, station_ids map[int]struct{}) error {
+	directory := impo.Path + "ride/" // "../data/ride/"
 	files, err := os.ReadDir(directory)
 	if err != nil {
 		return err
@@ -87,11 +106,11 @@ func csvRides(db *sql.DB, station_ids map[int]struct{}) error {
 	for _, f := range files {
 		ride_file_names = append(ride_file_names, fmt.Sprintf("%s%s", directory, f.Name()))
 	}
-	//fmt.Println("")
+
 	ride_service := NewRideService(db)
 	for _, path := range ride_file_names {
 		import_info := fmt.Sprintf("Importing '%s'", path)
-		fmt.Print(import_info)
+		impo.printLn(import_info)
 		keys, data, err := csv.ReadFromCSV(path)
 		if err != nil {
 			return err
@@ -105,7 +124,7 @@ func csvRides(db *sql.DB, station_ids map[int]struct{}) error {
 		active_routines := 0
 
 		print_update := func(i int) {
-			fmt.Printf("\r%s - [%7d / %7d]", import_info, i, len(data))
+			impo.print(fmt.Sprintf("\r%s - [%7d / %7d]", import_info, i, len(data)))
 		}
 
 		for i := 0; i < len(data); i += batch_size {
@@ -146,7 +165,7 @@ func csvRides(db *sql.DB, station_ids map[int]struct{}) error {
 		}
 		wg.Wait()
 		print_update(len(data))
-		fmt.Println()
+		impo.printLn("")
 
 	}
 	return nil

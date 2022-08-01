@@ -132,7 +132,7 @@ func (sqf *select_query_friend) setupTextSearch(parameters map[string][]string) 
 func newRideSelectQueryFriend(parameters map[string][]string) *select_query_friend {
 
 	sqf := &select_query_friend{
-		select_values: []string{"departure", "`return`", "departure_station", "return_station", "duration", "distance"},
+		select_values: []string{"departure", "`return`", "departure_station", "return_station", "distance", "duration"},
 		from_table:    "ride",
 	}
 	sqf.setupLang(parameters)

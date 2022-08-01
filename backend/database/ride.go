@@ -53,6 +53,11 @@ func (rs *RideService) GetCount() (int, error) {
 	return count, nil
 }
 
+// Call after operations that change the total count of rides.
+func (rs *RideService) countHasChanged() {
+	rs.ride_count = unset_ride_count
+}
+
 func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
 	const sql_insert = "INSERT INTO ride  VALUES %s ON DUPLICATE KEY UPDATE departure=departure"
 	const number_of_values = 6
@@ -78,7 +83,7 @@ func (rs *RideService) CreateRides(rides [](*bike_app_be.Ride)) error {
 	if err != nil {
 		return err
 	}
-	rs.ride_count = unset_ride_count
+	rs.countHasChanged()
 	return nil
 }
 

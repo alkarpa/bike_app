@@ -7,7 +7,9 @@ import (
 	"alkarpa.fi/bike_app_be/mock"
 )
 
-var test_url = fmt.Sprintf("http://%s:%s", addr, port)
+const test_port = "8080"
+
+var test_url = fmt.Sprintf("http://%s:%s", addr, test_port)
 
 type TestServer struct {
 	*Server

@@ -1,0 +1,6 @@
+Departure,Return,Departure station id,Departure station name,Return station id,Return station name,Covered distance (m),Duration (sec.)
+2022-08-01T12:37:30,2022-08-01T12:38:12,1,Testi,2,"Testruction,; Terby",1555,42
+2022-08-01T12:37:31,2022-08-01T12:38:13,1,Testi,2,"Testruction,; Terby",4,43
+2022-08-01T12:37:32,2022-08-01T12:38:14,1,Testi,2,"Testruction,; Terby",1557,5
+2022-08-01T12:40:30,2022-08-01T12:41:12,2,"Testruction,; Terby",1,Testi,1550,72
+2022-08-01T13:37:30,2022-08-01T13:38:12,3,Etsi,3,Etsi,2000,60

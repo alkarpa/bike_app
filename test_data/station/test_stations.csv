@@ -1,0 +1,4 @@
+FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+1,1,Testi,Ett test,A test,Testiosoite,Testadress,Helsinki,Helsingfors,Testipyörät,1,24.555,60.555
+2,2,"Testruction,, Terby","Testruction,; Terby","Testruction,, Terby","Testruction,, Terby","Testruction,, Terby",Helsinki,Helsingfors,Testipyörät,2,25.555,61.555
+3,3,Etsi,Sök,Search,E,S,Helsinki,Helsingfors,Testipyörät,1,24.525,60.525

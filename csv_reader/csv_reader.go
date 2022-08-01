@@ -86,7 +86,7 @@ func ReadFromCSV(path string) ([]string, [][]string, error) {
 			continue
 		}
 		// skip lines with missing data
-		if len(line) == 0 || strings.Contains(line, ",,") || strings.Contains(line, ",\n") {
+		if len(line) == 0 || strings.Contains(line, ",\n") {
 			last_line_index := len(lines) - 1
 			if i != last_line_index {
 				fmt.Printf("Skipping line %d: '%s' \n", i, line)

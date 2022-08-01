@@ -177,6 +177,16 @@ func TestSelectQueryFriend_queries(t *testing.T) {
 		if query != expected {
 			t.Errorf("expected '%s', got '%s'", expected, query)
 		}
-
+	})
+	t.Run("COUNT(*) from station, nothing more", func(t *testing.T) {
+		sqf := &select_query_friend{
+			select_values: []string{"COUNT(*)"},
+			from_table:    "station",
+		}
+		query := strings.TrimSpace(sqf.buildQuery())
+		expected := "SELECT COUNT(*) FROM station"
+		if query != expected {
+			t.Errorf("expected '%s', got '%s'", expected, query)
+		}
 	})
 }
