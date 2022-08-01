@@ -31,12 +31,12 @@ func NewServer() *Server {
 	}
 
 	server.router.Use(mux.CORSMethodMiddleware(server.router))
-	server.router.Use(middleware)
+	server.router.Use(headerMiddleware)
 
 	return server
 }
 
-func middleware(next http.Handler) http.Handler {
+func headerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")

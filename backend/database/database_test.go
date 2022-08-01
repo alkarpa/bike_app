@@ -185,4 +185,77 @@ func TestDatabase(t *testing.T) {
 
 	})
 
+	t.Run("Stations", func(t *testing.T) {
+		station_service := NewStationService(db)
+
+		t.Run("GetAll", func(t *testing.T) {
+			stations, err := station_service.GetAll()
+			if err != nil {
+				t.Error(err)
+			}
+			t.Run("len(stations)=3", func(t *testing.T) {
+				received := len(stations)
+				expected := 3
+				if received != expected {
+					t.Errorf("expected '%d', got '%d'", expected, received)
+				}
+			})
+
+		})
+
+		t.Run("GetDetails", func(t *testing.T) {
+			stats, err := station_service.GetDetails(1)
+			if err != nil {
+				t.Error(err)
+			}
+			t.Run("Departing", func(t *testing.T) {
+				departing := stats.Departing
+				t.Run("7 has 1 departing", func(t *testing.T) {
+					received := departing["2022-7"].Count
+					expected := 1
+					if received != expected {
+						t.Errorf("expected '%d', got '%d'", expected, received)
+					}
+				})
+				t.Run("8 is empty", func(t *testing.T) {
+					received := departing["2022-8"]
+					if received != nil {
+						t.Errorf("expected nil, got '%v'", received)
+					}
+				})
+				t.Run("all has 1 departing", func(t *testing.T) {
+					received := departing["all"].Count
+					expected := 1
+					if received != expected {
+						t.Errorf("expected '%d', got '%d'", expected, received)
+					}
+				})
+			})
+			t.Run("Returning", func(t *testing.T) {
+				returning := stats.Returning
+				t.Run("8 has 1 returning", func(t *testing.T) {
+					received := returning["2022-8"].Count
+					expected := 1
+					if received != expected {
+						t.Errorf("expected '%d', got '%d'", expected, received)
+					}
+				})
+				t.Run("7 is empty", func(t *testing.T) {
+					received := returning["2022-7"]
+					if received != nil {
+						t.Errorf("expected nil, got '%v'", received)
+					}
+				})
+				t.Run("all has 1 returning", func(t *testing.T) {
+					received := returning["all"].Count
+					expected := 1
+					if received != expected {
+						t.Errorf("expected '%d', got '%d'", expected, received)
+					}
+				})
+			})
+		})
+
+	})
+
 }
