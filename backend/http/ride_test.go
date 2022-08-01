@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"alkarpa.fi/bike_app_be"
@@ -11,9 +12,7 @@ import (
 
 func TestRide(t *testing.T) {
 	ts := OpenTestServer(t)
-	defer ts.Close()
-
-	url := test_url + "/ride/"
+	path := "/ride"
 
 	t.Run("GetCount ok", func(t *testing.T) {
 		ts.RideService.GetCountFn = func() (int, error) {
@@ -33,18 +32,18 @@ func TestRide(t *testing.T) {
 				return rides, nil
 			}
 
-			req, err := http.NewRequest("GET", url, nil)
+			req, err := http.NewRequest(http.MethodGet, path, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			res, err := http.DefaultClient.Do(req)
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer res.Body.Close()
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(ts.getRides())
+
+			handler.ServeHTTP(rr, req)
+
 			t.Run("Status code", func(t *testing.T) {
-				if received, expected := res.StatusCode, http.StatusOK; received != expected {
+				if received, expected := rr.Code, http.StatusOK; received != expected {
 					t.Fatalf("Expected %v, received %v", expected, received)
 				}
 			})
@@ -53,7 +52,7 @@ func TestRide(t *testing.T) {
 					Count int                 `json:"count"`
 					Rides []*bike_app_be.Ride `json:"rides"`
 				}{}
-				if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
+				if err := json.NewDecoder(rr.Body).Decode(&result); err != nil {
 					t.Error(err)
 				}
 				t.Run("len(data) is 2", func(t *testing.T) {
@@ -73,9 +72,9 @@ func TestRide(t *testing.T) {
 				t.Run("Departure stations are 0 and 1", func(t *testing.T) {
 					expected := []int{0, 1}
 					received := result.Rides
-					for i, _ := range expected {
+					for i := range expected {
 						if expected[i] != received[i].Departure_station_id {
-							t.Errorf("Expected %v, received %v", expected, received)
+							t.Errorf("Expected %v, received %v", expected, received[i].Departure_station_id)
 						}
 
 					}
@@ -89,18 +88,18 @@ func TestRide(t *testing.T) {
 				return nil, errors.New("test error")
 			}
 
-			req, err := http.NewRequest("GET", url, nil)
+			req, err := http.NewRequest("GET", path, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			res, err := http.DefaultClient.Do(req)
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer res.Body.Close()
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(ts.getRides())
+
+			handler.ServeHTTP(rr, req)
+
 			t.Run("Status code", func(t *testing.T) {
-				if received, expected := res.StatusCode, http.StatusInternalServerError; received != expected {
+				if received, expected := rr.Code, http.StatusInternalServerError; received != expected {
 					t.Fatalf("Expected %v, received %v", expected, received)
 				}
 			})
@@ -111,18 +110,18 @@ func TestRide(t *testing.T) {
 		ts.RideService.GetCountFn = func() (int, error) {
 			return -1, errors.New("testing error")
 		}
-		req, err := http.NewRequest("GET", url, nil)
+		req, err := http.NewRequest("GET", path, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		res, err := http.DefaultClient.Do(req)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer res.Body.Close()
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(ts.getRides())
+
+		handler.ServeHTTP(rr, req)
+
 		t.Run("Status code", func(t *testing.T) {
-			if received, expected := res.StatusCode, http.StatusInternalServerError; received != expected {
+			if received, expected := rr.Code, http.StatusInternalServerError; received != expected {
 				t.Fatalf("Expected %v, received %v", expected, received)
 			}
 		})

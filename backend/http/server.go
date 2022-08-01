@@ -1,20 +1,14 @@
 package http
 
 import (
-	"context"
 	"fmt"
 	"net/http"
-	"time"
 
 	"alkarpa.fi/bike_app_be"
 	"github.com/gorilla/mux"
 )
 
-const addr = "localhost"
-const port = "8080"
-
 type Server struct {
-	server *http.Server
 	router *mux.Router
 
 	RideService    bike_app_be.RideService
@@ -24,11 +18,8 @@ type Server struct {
 func NewServer() *Server {
 
 	server := &Server{
-		server: &http.Server{},
 		router: mux.NewRouter(),
 	}
-
-	server.server.Handler = http.HandlerFunc(server.serveHTTP)
 
 	{
 		subrouter := server.router.PathPrefix("/ride").Subrouter()
@@ -39,7 +30,18 @@ func NewServer() *Server {
 		server.registerStationRoutes(subrouter)
 	}
 
+	server.router.Use(mux.CORSMethodMiddleware(server.router))
+	server.router.Use(middleware)
+
 	return server
+}
+
+func middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (server *Server) registerRideRoutes(r *mux.Router) {
@@ -51,23 +53,7 @@ func (server *Server) registerStationRoutes(r *mux.Router) {
 }
 
 func (server *Server) ListenAndServe() {
-	server.server.Addr = fmt.Sprintf("%s:%s", addr, port)
-	go server.server.ListenAndServe()
+	fmt.Println("Opening server")
+	http.ListenAndServe("localhost:8080", server.router)
 
-	fmt.Println("Server listening")
-}
-
-func (server *Server) serveHTTP(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Add("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	server.router.ServeHTTP(w, r)
-}
-
-func (server *Server) Close() {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	server.server.Shutdown(ctx)
-	fmt.Println("Server shutdown")
 }
