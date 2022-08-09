@@ -3,13 +3,15 @@ package database
 import (
 	"database/sql"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
 
 const test_db = "bike_app_test"
 const test_user = "bike_app_test_user"
-const test_password = "bike_pw"
+
+var test_password = os.Getenv("BIKE_APP_TEST_PW")
 
 func TestDatabaseFailedOpen(t *testing.T) {
 	_, err := openSQL("", "___", "___")
@@ -52,7 +54,7 @@ func initializeDatabaseForTests(db *sql.DB) error {
 func TestDatabase(t *testing.T) {
 	db, err := openSQL(test_user, test_password, test_db)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	defer db.Close()
 

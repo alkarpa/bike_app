@@ -13,7 +13,10 @@ func main() {
 	db, err := database.OpenSQL()
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
+	defer db.Close()
+
 	importer := database.CSVImporter{
 		Path:     "../data/",
 		Verbose:  true,
