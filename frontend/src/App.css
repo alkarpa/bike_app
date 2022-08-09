@@ -1,3 +1,51 @@
+:root {
+  --view_bg: white
+}
+
+body {
+  background-color: aqua;
+  min-height: 100vh;
+}
+
+#root {
+  height: 100%;
+}
+
+.AppHeader {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+}
+
+.View {
+  background-color: var(--view_bg);
+  height: '100%';
+}
+
+.Tab {
+  border-radius: 1em 1em 0 0;
+  font-size: large;
+  font-weight: bold;
+}
+
+.ActiveTab {
+  background-color: var(--view_bg);
+  border-bottom: none;
+}
+
+.Panel {
+  box-shadow: 2px 2px 2px 2px gray;
+  border: 1px black solid;
+  border-radius: 2px;
+  margin: 0.5em;
+}
+.Panel>header {
+  width: 100%;
+  background-color: gray;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 1px 1px black;
+}
 
 table {
   margin: 1em;
@@ -16,6 +64,7 @@ table tr:nth-child(2n) {
 }
 
 .App {
+  min-height: 100vh;
   display: grid;
   grid-template-rows: min-content 1fr;
 }
@@ -30,4 +79,12 @@ table tr:nth-child(2n) {
   animation-duration: 1s;
   animation-iteration-count: infinite;
   animation-play-state: running;
+}
+
+.LinkButton {
+  margin: 0px;
+  color: blue;
+  background-color: inherit;
+  border: none;
+  display:contents;
 }

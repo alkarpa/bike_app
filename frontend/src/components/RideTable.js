@@ -4,11 +4,12 @@ import ErrorMessage from "./ErrorMessage"
 import LoadingPlaceholder from "./LoadingPlaceholder"
 
 
-const RideTable = ({lang}) => {
+const RideTable = ({ lang }) => {
   const [rides, setRides] = useState({ loading: true })
   const [page, setPage] = useState(0)
-  const [parameters, setParameters] = useState({lang:lang})
+  const [parameters, setParameters] = useState({ lang: lang })
   const [processing, setProcessing] = useState(true)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     setProcessing(true)
@@ -85,14 +86,14 @@ const RideTable = ({lang}) => {
     </div>
   )
 
-  const DateTime = ({datestring}) => {
-    const date = datestring.substring(0,10)
+  const DateTime = ({ datestring }) => {
+    const date = datestring.substring(0, 10)
     const time = datestring.substring(11)
-    const nowrap = {whiteSpace: 'nowrap'}
+    const nowrap = { whiteSpace: 'nowrap' }
     return (
       <>
-      <span style={nowrap}>{date}</span><br/>
-      <span>{time}</span>
+        <span style={nowrap}>{date}</span><br />
+        <span>{time}</span>
       </>
     )
   }
@@ -102,7 +103,7 @@ const RideTable = ({lang}) => {
     return (
       <table style={{ fontFamily: 'monospace', width: '80ch' }}>
         <caption>Showing rides {'['}{first_index},{first_index + showing_count}{']'} of {rides_count}</caption>
-        <thead style={{whiteSpace: 'nowrap'}}>
+        <thead style={{ whiteSpace: 'nowrap' }}>
           <tr>
             <OrderableTh order={parameters['order']} w={14} changeOrder={changeOrder} orderable="departure">Departure</OrderableTh>
             <OrderableTh order={parameters['order']} w={14} changeOrder={changeOrder} orderable="return">Return</OrderableTh>
@@ -112,11 +113,10 @@ const RideTable = ({lang}) => {
             <OrderableTh order={parameters['order']} w={10} changeOrder={changeOrder} orderable="duration">Duration</OrderableTh>
           </tr>
         </thead>
-        <tbody style={{ position: 'relative', overflowX: 'hidden' }}>
-          <ProcessingCover />
+        <tbody style={{ overflowX: 'hidden' }}>
           {
-            rides_list.map(ride => (
-              <tr key={`ride_${ride.departure}_${ride.return}_${ride.departure_station_id}_${ride.return_station_id}`}>
+            rides_list.map( (ride,i) => (
+              <tr key={`ride_${ride.departure}_${ride.return}_${ride.departure_station_id}_${ride.return_station_id}_${i}`}>
                 <td><DateTime datestring={ride.departure} /></td>
                 <td><DateTime datestring={ride.return} /></td>
                 <td>{ride.departure_station_name}</td>
@@ -135,36 +135,52 @@ const RideTable = ({lang}) => {
   const ProcessingCover = () => {
     if (processing) {
       return (
-        <tr style={{
+        <div style={{
           width: '100%', height: '100%', zIndex: '50',
           position: 'absolute', opacity: '0.5',
           backgroundImage: 'linear-gradient(gray, transparent)',
           textAlign: 'center'
         }}>
-          <td colSpan={6}>
-            <div style={{ height: '100%', width: '80ch' }}>
-              <h1 style={{textShadow: '2px 2px white'}}>Processing</h1>
-
-              <div className='Rotating' style={{
-                width: '2em',
-                height: '10em',
-                backgroundColor: 'black',
-                marginLeft: '50%',
-              }}></div>
-            </div>
-          </td>
-        </tr>
+          <LoadingPlaceholder />
+        </div>
       )
     }
     return <></>
   }
 
+  const handleSearchChange = (event) => {
+    const value = event.target.value
+    setSearch(value)
+  }
+  const handleSearchClick = (searchword) => {
+    if (searchword !== '') {
+      setParameters( {...parameters, search: searchword} )
+    } else {
+      const woSearch = (({search, ...other_parameters}) => other_parameters)(parameters)
+      setParameters(woSearch)
+    }
+  }
+  const resetSearch = () => {
+    setSearch('')
+    if (parameters.search) {
+      handleSearchClick('')
+    }
+  }
+
 
   return (
-    <div>
-      <h1 style={{ textAlign: 'center' }}>Rides</h1>
-      <PageButtons />
-      <RTable />
+    <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center'}}>
+      <div>
+        <h1>Station Search</h1>
+        <input onChange={handleSearchChange} value={search}/>
+        <button onClick={() => handleSearchClick(search)}>Search</button>
+        <button disabled={search === ''} onClick={resetSearch}>Reset</button>
+      </div>
+      <div className="Panel" style={{display: 'inline-block', position: 'relative'}}>
+        <PageButtons />
+        <ProcessingCover />
+        <RTable />
+      </div>
     </div>
 
   )

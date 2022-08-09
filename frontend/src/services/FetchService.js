@@ -28,7 +28,7 @@ const getStations = async () => {
 }
 
 const buildRideParaStr = (parameters) => {
-    const accepted_parameters = ['page', 'order', 'lang']
+    const accepted_parameters = ['page', 'order', 'lang','search']
     let param = []
     for (let p of accepted_parameters) {
         if (parameters[p]) {

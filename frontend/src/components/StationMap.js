@@ -42,26 +42,26 @@ const StationMap = ({ stations, filtered, active_low, active_high }) => {
         return { ...c, color: c_rest, size: s_rest }
     })
 
+    const margin_percent = 5
 
     return (
-        <div>
-            <div style={{ border: '1px black solid', 
-            borderBottom: '0', 
-            display: 'inline-block',
-            width: `${scale}%`,
-            textAlign: 'center',
-            backgroundColor: 'gray'
-            }}>Relative position map</div>
-            <div style={{width: '100vw'}}>
-                <svg style={{ width: `${scale}%`, aspectRatio: diff_x / diff_y, border: '1px brown solid' }}>
-                    {
-                        dots.map((c, i) => (
-                            <rect key={`coord_${i}_${c.x}`} x={`${c.x + 5}%`} y={`${100 - (c.y + 5)}%`} width={c.size} height={c.size} fill={c.color} />
-                        ))
-                    }
-                </svg>
+        <div className='Panel'
+            style={{ backgroundColor: '#f0f0f0', display: 'grid', gridTemplateRows: 'min-content 1fr', justifyItems: 'center' }}
+        >
+            <header>Relative position map</header>
+            <svg style={{ width: `${scale}%`, aspectRatio: diff_x / diff_y, backgroundColor: 'white' }}>
+                {
+                    dots.map((c, i) => (
+                        <rect key={`coord_${i}_${c.x}`}
+                            x={`${c.x + margin_percent}%`}
+                            y={`${100 - (c.y + margin_percent)}%`}
+                            width={c.size}
+                            height={c.size}
+                            fill={c.color} />
+                    ))
+                }
+            </svg>
 
-            </div>
         </div>
     )
 

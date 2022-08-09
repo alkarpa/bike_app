@@ -6,12 +6,12 @@ import RideTable from './components/RideTable';
 import StationTable from './components/StationTable';
 import fetch_service from './services/FetchService';
 
-const views = ["stations", "rides"]
+const views = [{id:"stations", title: 'Stations'}, {id:"rides", title:'Bike rides'}]
 
 const App = () => {
   const [lang, setLang] = useState('fi')
   const [stations, setStations] = useState({ loading: true })
-  const [view, setView] = useState(views[0])
+  const [view, setView] = useState(views[0].id)
 
   useEffect(() => {
     const fetch_data = async () => {
@@ -27,19 +27,26 @@ const App = () => {
       "fi": "🇫🇮",
     }
     return (
-      <div>
-        Data language:
-        {["fi", "se"].map(l => (<button key={`lb_${l}`} onClick={() => setLang(l)}>{flags[l]}</button>))}
+      <div style={{textAlign: 'center'}}>
+        <span style={{whiteSpace: 'nowrap'}}>Data language:</span>
+        {["fi", "se"].map(l => (
+        <button key={`lb_${l}`} 
+                onClick={() => setLang(l)}
+                style={ l === lang ? {backgroundColor: 'white'} : {} }
+        >{flags[l]}
+        </button>
+        ))}
       </div>
     )
   }
 
   const ViewTabs = () => (
     <div style={{ display: 'grid', gridTemplateColumns: `repeat(${views.length}, 1fr)` }}>
-      {views.map(v => (<button key={`view_${v}`}
-        onClick={() => setView(v)}
-        style={view === v ? { backgroundColor: 'white', borderBottom: 'none' } : {}}
-      >{v}</button>))}
+      {views.map(v => (<button key={`view_${v.id}`}
+        onClick={() => setView(v.id)}
+        className={ view === v.id ? 'Tab ActiveTab' : 'Tab' }
+        /*style={view === v ? { backgroundColor: 'white', borderBottom: 'none' } : {}}*/
+      >{v.title}</button>))}
     </div>
   )
 
@@ -52,27 +59,23 @@ const App = () => {
     }
 
     const stations_list = stations.data
-    return (
-      <div className="View">
-        {
-          view === 'stations'
-            ? <StationTable lang={lang} stations={stations_list} />
-            : view === 'rides'
-              ? <RideTable lang={lang}/>
-              : <></>
-        }
-
-      </div>
-    )
+    switch(view) {
+      case 'stations': return <StationTable lang={lang} stations={stations_list} />
+      case 'rides': return <RideTable lang={lang}/>
+      default: <ErrorMessage error={"Unknown view"} />
+    }
   }
 
   return (
     <div className="App">
-      <header>
+      <header className="AppHeader">
         <LanguageSelection />
         <ViewTabs />
       </header>
-      <View />
+      <div className='View'>
+        <View />
+      </div>
+      
     </div>
   );
 }
