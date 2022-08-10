@@ -4,4 +4,5 @@
 /data/
 /backend/*.out
 /backend/*.html
+/backend/static/*
 commit_msg.txt

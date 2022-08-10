@@ -24,19 +24,25 @@ func NewServer() *Server {
 	{
 		subrouter := server.router.PathPrefix("/ride").Subrouter()
 		server.registerRideRoutes(subrouter)
+		subrouter.Use(JSONMiddleware)
 	}
 	{
 		subrouter := server.router.PathPrefix("/station").Subrouter()
 		server.registerStationRoutes(subrouter)
+		subrouter.Use(JSONMiddleware)
 	}
 
+	{
+		subrouter := server.router.PathPrefix("/").Subrouter()
+		subrouter.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	}
 	server.router.Use(mux.CORSMethodMiddleware(server.router))
-	server.router.Use(headerMiddleware)
+	//server.router.Use(headerJSONMiddleware)
 
 	return server
 }
 
-func headerMiddleware(next http.Handler) http.Handler {
+func JSONMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")

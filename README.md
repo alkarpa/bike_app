@@ -68,6 +68,12 @@ There are two backend commands
 
 The frontend is a npm React project and requires npm to build and run.
 
+To make an optimized build and copy it to the `backend/static` folder, run the following command in the `frontend` directory
+
+```
+npm run buildandcopy
+```
+Running the `buildandcopy` script allows the backend to serve the frontend from `localhost:8080`.
 
 ===
 
@@ -80,7 +86,7 @@ go run ./cmd/backend/
 ```
 > The backend requires the `BIKE_APP_PW` environment variable to be the database user's password.
 
-Run the following command in the frontend folder to start the frontend
+If you skipped the `buildandcopy` script, run the following command in the frontend folder to start the frontend
 
 ```
 npm start
@@ -161,3 +167,25 @@ The data is retrieved from the backend for each and every list modifying action 
   * Uses pagination and has page controls at the top
     * LIMIT OFFSET pagination for simplicity
   * Ordering can be changed by clicking the table headers
+
+### Backend manual
+
+The backend listens and serves at `localhost:8080`
+
+| Path | Purpose |
+| ---- | ------- |
+| `/`    | Serves the frontend if a build is found in the static folder |
+| `/station/` | Data about the stations |
+| `/station/(id)` | Statistics on a station identified by its (id) |
+| `/ride/` | List of bike rides |
+
+The `/ride/` path prefix accepts query strings.
+
+| Parameter | Values |
+| --------- | ------ |
+| page | Positive integers |
+| order | ride database column names, eg. `departure`, with optional postfix `_desc` |
+| search | strings |
+| lang | 2 char lower case language codes, eg. "fi" |
+
+Example url with a full query string `http://localhost:8080/ride/?page=2&order=departure_desc&search=Lau&lang=se`
