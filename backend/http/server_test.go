@@ -20,7 +20,5 @@ func OpenTestServer(tb testing.TB) *TestServer {
 	ts.Server.RideService = &ts.RideService
 	ts.Server.StationService = &ts.StationService
 
-	ts.ListenAndServe()
-
 	return ts
 }

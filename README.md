@@ -114,7 +114,7 @@ The default view lists all the stations.
   * Min ID
     * Sets the minimum ID. Any station with an ID smaller than the given value will be filtered out
   * Max ID
-    * Sets the Maximum ID. Any station with an ID greater than the given value will be filtered out
+    * Sets the maximum ID. Any station with an ID greater than the given value will be filtered out
     
 * Station list
   * Page buttons
