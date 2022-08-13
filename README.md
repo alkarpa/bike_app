@@ -30,7 +30,9 @@ As such, security minded individuals may want to skip the script database setup 
 
 `setup.sh` should be run from its containing folder as it uses relative paths
 
-> `./setup.sh`
+```
+./setup.sh
+```
 
 If run successfully, the setup script will run the backend making the service available at http://localhost:8080 .
 
@@ -103,6 +105,12 @@ There are two backend commands
 ### Frontend
 
 The frontend is a npm React project and requires npm to build and run.
+
+The first step is to install the project dependencies by running the following command in the `frontend` directory
+
+```
+npm install
+```
 
 To make an optimized build and copy it to the `backend/static` folder, run the following command in the `frontend` directory
 
