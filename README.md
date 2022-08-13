@@ -1,10 +1,43 @@
 # Bike App
  
-A web application for displaying bike data from a backend, the said backend, and a data importer.
-
-=== 
+A web application for displaying bike data.
 
 ## Setup
+
+You will need
+
+* `npm` to build the frontend
+* `go` to build and run the backend
+* `mariadb` up and running
+
+and optionally
+
+* `curl` to download the datasets using the script
+
+---
+
+The interactive `setup.sh` Bash script can be used to 
+
+* set up the databases,
+* download the datasets, 
+* generate test coverage reports for the csv_reader and the backend,
+* build the frontend and provide the build of the frontend to the backend,
+* import the dataset data into the database, and
+* run the backend.
+
+Setting up the databases using the script requires inputting the credentials of a password identified MariaDB user with `ALL PRIVILEGES ON *.* WITH GRANT OPTION`.
+As such, security minded individuals may want to skip the script database setup and do it manually as described below, or inspect the script and .sql files carefully.
+
+`setup.sh` should be run from its containing folder as it uses relative paths
+
+> `./setup.sh`
+
+If run successfully, the setup script will run the backend making the service available at http://localhost:8080 .
+
+If setup through the script is not an option for you, description of requirements and manual steps can be found below. 
+Reverse engineering the script and .sql files may also be helpful or a fun way to go about it.
+
+---
 
 ### CSV Data
 
@@ -46,6 +79,9 @@ Set up the users with password identification and according to the table below s
 |Testing | `bike_app_test` | `bike_app_test_user` | `BIKE_APP_TEST_PW` |
 
 
+* users_databases.sql creates users and databases (requires `ALL PRIVILEGES ON *.* WITH GRANT OPTION`)
+* bike_app.sql creates tables inside a database (used by users_databases.sql)
+
 The backend uses BIKE_APP_PW environment variable to log into the database. On Linux it can be applied while starting the backend through the command line,
 eg.
 
@@ -74,8 +110,6 @@ To make an optimized build and copy it to the `backend/static` folder, run the f
 npm run buildandcopy
 ```
 Running the `buildandcopy` script allows the backend to serve the frontend from `localhost:8080`.
-
-===
 
 ## Use
 
