@@ -120,6 +120,7 @@ done
 echo
 echo "-- Build the frontend and copy it to the backend static folder"
 cd frontend
+npm install
 npm run buildandcopy
 
 # Run the csv_reader tests and generate a coverage HTML file

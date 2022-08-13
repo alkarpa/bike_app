@@ -7,7 +7,7 @@ import (
 )
 
 func TestStationService(t *testing.T) {
-	db, err := openSQL("bike_app_test_user", "bike_pw", "bike_app_test")
+	db, err := openSQL(test_user, test_password, test_db)
 	if err != nil {
 		t.Error(err)
 	}
