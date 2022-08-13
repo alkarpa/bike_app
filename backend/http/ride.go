@@ -14,7 +14,7 @@ func (server *Server) getRides() func(http.ResponseWriter, *http.Request) {
 		urlParams := r.URL.Query()
 		//fmt.Printf("Query - %s", urlParams)
 
-		count, err := server.RideService.GetCount()
+		count, err := server.RideService.GetCount(urlParams)
 		if err != nil {
 			http.Error(w, "error retrieving ride count", http.StatusInternalServerError)
 		}

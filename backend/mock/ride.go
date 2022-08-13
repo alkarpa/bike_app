@@ -16,6 +16,6 @@ func (rs *RideService) GetRides(p map[string][]string) ([]*bike_app_be.Ride, err
 	return rs.GetRidesFn(p)
 }
 
-func (rs *RideService) GetCount() (int, error) {
+func (rs *RideService) GetCount(p map[string][]string) (int, error) {
 	return rs.GetCountFn()
 }

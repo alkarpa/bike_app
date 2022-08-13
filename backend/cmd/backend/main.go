@@ -10,7 +10,7 @@ import (
 func main() {
 	db, err := database.OpenSQL()
 	if err != nil {
-		log.Fatal("failed to open database connection")
+		log.Fatal(err)
 	}
 	defer db.Close()
 

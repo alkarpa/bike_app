@@ -30,13 +30,16 @@ func statementValues(number_of_values uint) string {
 	return fmt.Sprintf("(%s)", strings.Join(qms, ","))
 }
 
-func (rs *RideService) GetCount() (int, error) {
+func (rs *RideService) GetCount(parameters map[string][]string) (int, error) {
+
+	_, search_found := parameters["search"]
 	// optimization trick
-	if rs.ride_count != unset_ride_count {
+	if rs.ride_count != unset_ride_count && !search_found {
 		return rs.ride_count, nil
 	}
+	sqf := newRideCountSelectQueryFriend(parameters)
 
-	rows, err := rs.db.Query("SELECT COUNT(*) FROM ride")
+	rows, err := rs.db.Query(sqf.buildQuery(), sqf.values...) //("SELECT COUNT(*) FROM ride")
 	if err != nil {
 		return unset_ride_count, err
 	}
@@ -50,6 +53,7 @@ func (rs *RideService) GetCount() (int, error) {
 	if err = rows.Err(); err != nil {
 		return unset_ride_count, err
 	}
+	rs.ride_count = count
 	return count, nil
 }
 

@@ -147,3 +147,13 @@ func newRideSelectQueryFriend(parameters map[string][]string) *select_query_frie
 	sqf.setupParamsPage(parameters)
 	return sqf
 }
+
+func newRideCountSelectQueryFriend(parameters map[string][]string) *select_query_friend {
+	sqf := &select_query_friend{
+		select_values: []string{"COUNT(*)"},
+		from_table:    "ride",
+	}
+	sqf.setupLang(parameters)
+	sqf.setupTextSearch(parameters)
+	return sqf
+}

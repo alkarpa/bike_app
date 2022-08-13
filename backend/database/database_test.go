@@ -66,15 +66,41 @@ func TestDatabase(t *testing.T) {
 		ride_service := NewRideService(db)
 
 		t.Run("GetCount", func(t *testing.T) {
-			count, err := ride_service.GetCount()
+			count, err := ride_service.GetCount(map[string][]string{})
 			if err != nil {
 				t.Error(err)
 			}
-			received := count
-			expected := 3
-			if received != expected {
-				t.Errorf("expected '%d', got '%d'", expected, received)
-			}
+			t.Run("First pass", func(t *testing.T) {
+				received := count
+				expected := 3
+				if received != expected {
+					t.Errorf("expected '%d', got '%d'", expected, received)
+				}
+			})
+
+			// For the count optimization part. Mocking would lead to a better test.
+			t.Run("Second pass", func(t *testing.T) {
+				count2, err := ride_service.GetCount(map[string][]string{})
+				if err != nil {
+					t.Error(err)
+				}
+				received := count2
+				expected := 3
+				if received != expected {
+					t.Errorf("expected '%d', got '%d'", expected, received)
+				}
+			})
+			t.Run("Search Etsi count 1", func(t *testing.T) {
+				count2, err := ride_service.GetCount(map[string][]string{"search": {"Etsi"}})
+				if err != nil {
+					t.Error(err)
+				}
+				received := count2
+				expected := 1
+				if received != expected {
+					t.Errorf("expected '%d', got '%d'", expected, received)
+				}
+			})
 		})
 
 		t.Run("GetRides", func(t *testing.T) {
